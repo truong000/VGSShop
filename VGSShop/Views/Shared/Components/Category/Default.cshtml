@@ -1,0 +1,11 @@
+﻿@model List<Category>
+
+@if (Model != null)
+{
+    @foreach (var item in Model)
+    {
+        <li><a href="/@item.Alias">@item.CatName</a></li>
+    }
+}
+
+

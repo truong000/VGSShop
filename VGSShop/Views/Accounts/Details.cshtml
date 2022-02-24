@@ -1,0 +1,71 @@
+﻿@model VGSShop.Models.Order
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<OrderDetail> orderDetails = ViewBag.ChiTiet;
+}
+<main class="main-content">
+    <div class="checkout-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <img src="~/images/category/rau-qu.jpg" />
+                </div>
+                <div class="col-lg-6 col-12">
+                    <div class="your-order">
+                        <h3>ĐƠN HÀNG CỦA QUÝ KHÁCH</h3>
+                        <div class="your-order-table table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="cart-product-name">Sản phẩm</th>
+                                        <th class="cart-product-total">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (orderDetails != null && orderDetails.Count() > 0)
+                                    {
+                                        foreach (var item in orderDetails)
+                                        {
+                                            string url = $"/{item.Product.Alias}-{item.Product.ProductId}.html";
+                                            <tr class="cart_item">
+                                                <td class="cart-product-name" href="@url">
+                                                    @item.Product.ProductName<strong class="product-quantity">
+                                                        × @item.Quantity
+                                                    </strong>
+                                                </td>
+                                                <td class="cart-product-total"><span class="amount">@item.Price.Value.ToString("#,##0") VNĐ</span></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="cart-subtotal">
+                                        <th>TỔNG HÓA ĐƠN</th>
+                                        <td><span class="amount">@Model.TotalMoney.ToString("#,##0") VNĐ</span></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <ul>
+                                <li>
+                                    <span class="comments me-3">
+                                        <a>Nếu quý khách cần tư vấn về chính sách mua nhận hàng thì vui lòng nhấn vào đây -</a>
+                                    </span>
+                                    <span class="link-share">
+                                        <a asp-controller="Home" asp-action="Contact">Liên hệ</a>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,110 @@
+﻿@model VGSShop.Models.Order
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    List<OrderDetail> orderDetails = ViewBag.ChiTiet;
+}
+
+<div class="page-container">
+
+
+    <!-- Content Wrapper START -->
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-sub-title">
+                <nav class="breadcrumb breadcrumb-dash">
+                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+                    <a class="breadcrumb-item" asp-area="Admin" asp-controller="AdminOrders" asp-action="Index">Danh sách sản phẩm</a>
+                    <span class="breadcrumb-item active">Thông tin đơn hàng :KH - @Model.Customer.FullName.ToUpper()</span>
+                </nav>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <div id="invoice" class="p-h-30">
+                        <div class="row m-t-20 lh-2">
+                            <div class="col-sm-7">
+                                <h3 class="p-l-10 m-t-10">ĐƠN HÀNG:</h3>
+                                <span class="font-weight-semibold text-dark">@Model.Customer.FullName.ToUpper()</span><br>
+                                <abbr class="text-dark" title="Address">Địa chỉ giao hàng</abbr>
+                                <span>@Model.Address</span><br>
+                                <abbr class="text-dark" title="Phone">Số điện thoại:</abbr>
+                                <span>@Model.Customer.Phone</span>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="m-t-80">
+                                    <div class="text-dark text-uppercase d-inline-block">
+                                        <span class="font-weight-semibold text-dark">THÔNG TIN MUA HÀNG</span>
+                                    </div>
+                                    <div class="float-right">MS-@Model.OrderId</div>
+                                </div>
+                                <div class="text-dark text-uppercase d-inline-block">
+                                    <span class="font-weight-semibold text-dark">Ngày mua:</span>
+                                </div>
+                                <div class="float-right">@Model.OrderDate</div>
+                                <div class="text-dark text-uppercase d-inline-block">
+                                    <span class="font-weight-semibold text-dark">Ngày ship hàng:</span>
+                                </div>
+                                <div class="float-right">@Model.ShipDate</div>
+                                <div class="text-dark text-uppercase d-inline-block">
+                                    <span class="font-weight-semibold text-dark">Trạng thái đơn hàng:</span>
+                                </div>
+                                <div class="float-right">@Model.TransactStatus.Status</div>
+                            </div>
+                        </div>
+                        <div class="m-t-20">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>SẢN PHẨM
+                                            <th>
+                                            <th>SỐ LƯỢNG</th>
+                                            <th></th>
+                                            <th>ĐƠN GIÁ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (orderDetails != null && orderDetails.Count() > 0)
+                                        {
+                                            int i = 1;
+                                            foreach (var item in orderDetails)
+                                            {
+                                                string url = $"/{item.Product.Alias}-{item.Product.ProductId}.html";
+                                                <tr>
+                                                    <td>@i</td>
+                                                    <td><a href="@url">@item.Product.ProductName</a></td>
+                                                    <td></td>
+                                                    <td>@item.Quantity</td>
+                                                    <td></td>
+                                                    <td>@item.Price.Value.ToString("#,##0") VNĐ</td>
+                                                </tr>
+                                                i++;
+                                            }
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row m-t-30 lh-1-8">
+                                <div class="col-sm-12">
+                                    <div class="float-right text-right">
+                                        <hr>
+                                        <h3><span class="font-weight-semibold text-dark">TỔNG TIỀN :</span> @Model.TotalMoney.ToString("#,##0") VNĐ</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <form asp-action="Delete">
+                                <input type="hidden" asp-for="OrderId" />
+                                <input type="submit" value="XÓA ĐƠN HÀNG" class="btn btn-danger" /> 
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

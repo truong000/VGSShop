@@ -1,0 +1,141 @@
+﻿@model VGSShop.Models.Customer
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Order> Danhsachdonhang = ViewBag.Order;
+    VGSShop.ModelsView.ChangePasswordViewModel changePassword = new VGSShop.ModelsView.ChangePasswordViewModel();
+}
+
+<!-- Begin Main Content Area -->
+<main class="main-content">
+    <div class="account-page-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <ul class="nav myaccount-tab-trigger" id="account-page-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="account-dashboard-tab" data-bs-toggle="tab" href="#account-dashboard" role="tab" aria-controls="account-dashboard" aria-selected="true">THÔNG TIN TÀI KHOẢN</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-orders-tab" data-bs-toggle="tab" href="#account-orders" role="tab" aria-controls="account-orders" aria-selected="false">DANH SÁCH ĐƠN HÀNG</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-details-tab" data-bs-toggle="tab" href="#account-details" role="tab" aria-controls="account-details" aria-selected="false">THAY ĐỔI MẬT KHẨU</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="account-logout-tab" href="dang-xuat.html" role="tab" aria-selected="false">ĐĂNG XUẤT</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-9">
+                    <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
+                        <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
+                            <div class="myaccount-dashboard">
+                                <p>
+                                    Xin chào: <b>@Model.FullName.ToUpper()</b>
+                                </p>
+                                <p>Email: @Model.Email</p>
+                                <p>Số điện thoại: @Model.Phone</p>
+                                <p>Địa chỉ: @Model.Adress</p>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
+                            <div class="myaccount-orders">
+                                <h4 class="small-title">DANH SÁCH ĐƠN HÀNG</h4>
+                                @if (Danhsachdonhang != null && Danhsachdonhang.Count > 0)
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Ngày đặt mua</th>
+                                                    <th>Ngày giao đi</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Tổng hóa đơn</th>
+                                                    <th></th>
+                                                </tr>
+                                                @foreach (var item in Danhsachdonhang)
+                                                {
+                                                    <tr>
+                                                        <td><a class="account-order-id" href="javascript:void(0)">#@item.OrderId</a></td>
+                                                        <td>@item.OrderDate</td>
+                                                        <td>@item.ShipDate</td>
+                                                        <td>@item.TransactStatus.Status</td>
+                                                        <td>@item.TotalMoney.ToString("#,##0") VNĐ</td>
+                                                        <td>
+                                                            <a class="btn btn-secondary btn-primary-hover" asp-area="" asp-controller="Accounts" asp-action="Details" asp-route-id="@item.OrderId"><span>Xem đơn hàng</span></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <br />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>Tài khoản này chưa có đơn hàng nào cả ! Xin cảm ơn.</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-address" role="tabpanel" aria-labelledby="account-address-tab">
+                            <div class="myaccount-address">
+                                <p>The following addresses will be used on the checkout page by default.</p>
+                                <div class="row">
+                                    <div class="col">
+                                        <h4 class="small-title">ĐỊA CHỈ THANH TOÁN</h4>
+                                        <address>
+                                            @Model.Adress
+                                        </address>
+                                    </div>
+                                    <div class="col">
+                                        <h4 class="small-title">ĐỊA CHỈ GIAO HÀNG</h4>
+                                        <address>
+                                            @Model.Adress
+                                        </address>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-details" role="tabpanel" aria-labelledby="account-details-tab">
+                            @await Html.PartialAsync("_ChangePasswordPartialView", changePassword)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Main Content Area End Here -->
+@section Script{
+    <script>
+        $(document).ready(function () {
+            $(".xemdonhang").click(function () {
+                var madonhang = $(this).attr("data-madonhang");
+                $.ajax({
+                    url: '/DonHang/Details',
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        id: madonhang,
+                    },
+                    async: true,
+                    success: function (results) {
+                        $("#records_table").html("");
+                        $("#records_table").html(results);
+                    },
+                    error: function (xhr) {
+                        alert("Đã có lỗi xảy ra");
+                    }
+                });
+            });
+        });
+    </script>
+}

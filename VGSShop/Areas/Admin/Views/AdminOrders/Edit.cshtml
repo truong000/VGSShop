@@ -1,0 +1,45 @@
+﻿@model VGSShop.Models.Order
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="modal-header">
+    <h5 class="modal-title">THÔNG TIN ĐƠN HÀNG</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="card">
+        <div class="card-body">
+            <form asp-area="Admin" asp-controller="AdminOrders" asp-action="Edit" asp-route-id="@Model.OrderId" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="OrderId" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Chọn trạng thái đơn hàng</label>
+                            <select class="form-control" asp-for="TransactStatusId" asp-items="ViewBag.TrangThai">
+                                <option value="0" disabled selected> Lựa chọn trạng thái</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Đã thanh toán</label>
+                    <input asp-for="Paid" type="checkbox" />
+                    <span asp-validation-for="Paid" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Đơn hàng bị hủy</label>
+                    <input asp-for="Deleted" type="checkbox" />
+                    <span asp-validation-for="Deleted" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">LƯU</button>
+            </form>
+        </div>
+    </div>
+</div>
+

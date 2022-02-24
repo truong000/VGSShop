@@ -1,0 +1,102 @@
+﻿@model VGSShop.Models.News
+
+@{
+    ViewData["Title"] = "Xóa bài viết : " + Model.Title;
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <a class="breadcrumb-item" asp-area="Admin" asp-controller="AdminNews" asp-action="Index">Danh sách bài viết</a>
+            <span class="breadcrumb-item active">Xóa bài viết : @Model.Title</span>
+        </nav>
+    </div>
+</div>
+<div class="page-header no-gutters has-tab">
+    <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+        <div class="media align-items-center m-b-15">
+            <div class="avatar avatar-image rounded" style="height: 70px; width: 100px">
+                <img src="~/images/news/@Model.Thumb" alt="@Model.Title">
+            </div>
+            <div class="m-l-15">
+                <h4 class="m-b-0">@Model.Title</h4>
+                <p class="text-muted m-b-0">ID: #@Model.PostId</p>
+            </div>
+        </div>
+
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#product-edit-basic">THÔNG TIN BÀI VIẾT</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#product-images">HÌNH ẢNH</a>
+        </li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="product-edit-basic">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title">XÁC NHẬN XÓA BÀI: @Model.Title.ToUpper()</h1>
+                    <div class="table-responsive">
+                        <form asp-action="Delete" asp-route-id="@Model.PostId">
+                            <input type="hidden" asp-for="PostId" />
+                            <table class="product-info-table m-t-20">
+
+                                <tbody>
+                                    <tr>
+                                        <td class="text-dark font-weight-semibold">Tên bài viết:</td>
+                                        <td>@Model.Title</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-dark font-weight-semibold">Alias:</td>
+                                        <td>@Model.Alias</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-dark font-weight-semibold">Trạng thái:</td>
+                                        <td>
+                                            <div class="checkbox">
+                                                <input asp-for="Published" type="checkbox" />
+                                                <label for="Published">Công khai</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-dark font-weight-semibold">Xác nhận XÓA</td>
+                                        <td>
+                                            <input type="submit" value="XÓA" class="btn btn-danger" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Thôn tin mô tả</h4>
+                </div>
+                <div class="card-body">
+                    @Html.Raw(Model.Contents)
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="product-images">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img class="img-fluid" src="~/images/news/@Model.Thumb" alt="@Model.Title">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

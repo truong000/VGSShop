@@ -1,0 +1,63 @@
+﻿@model IEnumerable<VGSShop.Models.Feedback>
+
+@{
+    ViewData["Title"] = "Hỗ trợ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <span class="breadcrumb-item active">Danh sách khách hàng</span>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+                        <th>Thông tin khách hàng</th>
+                        <th>Ngày gửi</th>
+                        <th>Yêu cầu liên hệ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <p>@item.Name</p>
+                                    <p>@item.Phone</p>
+                                    <p>@item.Email</p>
+                                    <p>@item.Address</p>
+                                </td>
+                                <td>@item.Content</td>
+                                <td>@item.CreatedDate</td>
+                                @*<td>@item.Location.Name</td>*@
+                                <td class="text-right">
+                                    <a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="Feedbacks" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+            @*<div aria-label="Page navigation example">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminCustomers" asp-action="Index" />
+                </ul>
+            </div>*@
+        </div>
+    </div>
+</div>
+@section Script{
+<script>
+
+</script>
+ }

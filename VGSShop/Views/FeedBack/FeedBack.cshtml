@@ -1,0 +1,88 @@
+﻿@model VGSShop.Models.Feedback
+
+@{
+    ViewData["Title"] = "FeedBack";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content">
+    <!-- Begin Shipping Area -->
+    <div class="shipping-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="shipping-item">
+                        <div class="shipping-img">
+                            <img src="~/assets/images/shipping/icon/plane.png" alt="Shipping Icon">
+                        </div>
+                        <div class="shipping-content">
+                            <h5 class="title">Giao hàng</h5>
+                            <p class="short-desc mb-0">Miễn phí vận chuyển</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 pt-6 pt-md-0">
+                    <div class="shipping-item">
+                        <div class="shipping-img">
+                            <img src="~/assets/images/shipping/icon/earphones.png" alt="Shipping Icon">
+                        </div>
+                        <div class="shipping-content">
+                            <h5 class="title">Hỗ trợ</h5>
+                            <p class="short-desc mb-0">Hỗ trợ tận tình</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 pt-6 pt-lg-0">
+                    <div class="shipping-item">
+                        <div class="shipping-img">
+                            <img src="~/assets/images/shipping/icon/shield.png" alt="Shipping Icon">
+                        </div>
+                        <div class="shipping-content">
+                            <h5 class="title">Thanh toán</h5>
+                            <p class="short-desc mb-0">Thanh toán khi nhận hàng</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shipping Area End Here -->
+
+    <div class="contact-with-map">
+        <div class="contact-map">
+            <iframe class="contact-map-size" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.774168220387!2d106.61750531380041!3d10.828586892286141!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752bd04e2c4aaf%3A0xc3eb31bcf5881807!2zMTAyIFBoYW4gVsSDbiBI4bubbiwgVMOibiBUaOG7m2kgTmjhuqV0LCBRdeG6rW4gMTIsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1642868117937!5m2!1svi!2s" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+        <div class="contact-form-area section-space-bottom-100">
+            <div class="container">
+                <div class="contact-form-wrap">
+                    <form id="contact-form" class="contact-form" action="https://whizthemes.com/mail-php/mamunur/harmic/harmic.php">
+                        <h4 class="contact-form-title pb-2 mb-7">Yêu cầu hỗ trợ</h4>
+                        <div class="form-field">
+                            <input type="text" id="txtName" placeholder="Họ tên*" class="input-field">
+                        </div>
+                        <div class="form-field mt-6">
+                            <input type="text" id="txtMobile" placeholder="Điện thoại*" class="input-field">
+                        </div>
+                        <div class="form-field mt-6">
+                            <input type="text" id="txtAddress" placeholder="Địa chỉ*" class="input-field">
+                        </div>
+                        <div class="form-field mt-6">
+                            <input type="text" id="txtEmail" placeholder="Email*" class="input-field">
+                        </div>
+                        <div class="form-field mt-6">
+                            <textarea type="text" id="txtContent" placeholder="Hỗ trợ" class="textarea-field"></textarea>
+                        </div>
+                        <div class="button-wrap mt-8">
+                            <button id="btnSend" type="submit" value="submit" class="btn btn btn-custom-size lg-size btn-primary btn-secondary-hover rounded-0" name="submit">Gửi yêu cầu</button>
+                        </div>
+                        <p class="form-messege mt-3 mb-0"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@section Script{
+    <script src="~/js/FeedBackController.js"></script>
+ }
+

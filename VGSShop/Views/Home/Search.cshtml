@@ -1,0 +1,109 @@
+﻿@model IEnumerable<VGSShop.Models.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content">
+    <div class="shop-area section-space-y-axis-100">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="tab-content text-charcoal pt-8">
+                        <div class="tab-pane fade show active" id="grid-view" role="tabpanel" aria-labelledby="grid-view-tab">
+                            <div class="product-grid-view row">
+                                @foreach (var item in Model)
+                                {
+                                    string url = $"/{item.MetaTitle}-{item.ID}.html";
+                                    <div class="col-lg-3 col-sm-6 pt-6">
+                                        <div class="product-item">
+                                            <div class="product-img img-zoom-effect">
+                                                <a href="@url">
+                                                    <img class="img-full" src="~/images/product/@item.Images" alt="@item.MetaTitle">
+                                                </a>
+                                                @*<div class="product-add-action">
+                                                    <ul>
+                                                        <li>
+                                                            <a href="/gio-hang/@item.ID">
+                                                                <i class="pe-7s-cart"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>*@
+                                            </div>
+                                            <div class="product-content">
+                                                <a class="product-name" href="@url">@item.Name</a>
+                                                <div class="price-box pb-1">
+                                                    <span class="new-price">@(item.Price.HasValue ? item.Price.Value.ToString("#,##0 VNĐ") : "Liên hệ cửa hàng")</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.TotalPage > 1)
+                    {
+                        var pageDisplay = (int)ViewBag.MaxPage;
+                        int totalPage = (int)ViewBag.TotalPage;
+                        int currentPage = ((int)ViewBag.Page);
+
+                        // Create numeric links
+                        var startPageIndex = Math.Max(1, currentPage - pageDisplay / 2);
+                        var endPageIndex = Math.Min(totalPage, currentPage + pageDisplay / 2);
+
+                        var link = "/tim-kiem?keyword/" + ViewBag.Keyword;
+                        <div class="pagination-area pt-10">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    @if (currentPage > ViewBag.First)
+                                    {
+
+                                        <li class="page-item">
+                                            <a class="page-link" href="@link&page=@ViewBag.First" aria-label="Previous">
+                                                <span class="fa fa-chevron-left"></span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @*<li class="page-item">
+                                            <a class="page-link" href="@link?page=@ViewBag.Prev" aria-label="Previous">
+                                                <span class="fa fa-chevron-left"></span>
+                                            </a>
+                                        </li>*@
+                                    @for (int i = startPageIndex; i <= endPageIndex; i++)
+                                    {
+                                        if (currentPage == i)
+                                        {
+                                            <li class="page-item active">
+                                                <a class="page-link" href="@link&page=@i" title="Trang @i">@i</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item">
+                                                <a class="page-link" href="@link&page=@i" title="Trang @i">@i</a>
+                                            </li>
+                                        }
+                                    }
+                                    @if (currentPage < totalPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@link&page=@ViewBag.Next" aria-label="Next">
+                                                <span class="fa fa-chevron-right"></span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
