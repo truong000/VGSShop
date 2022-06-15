@@ -281,34 +281,5 @@
 }
 
 @section Script{
-    <script>
-        $(document).ready(function () {
-            $(function () {
-                $(".add-to-cart").click(function () {
-                    var productid = $('#ProductId').val();
-                    var soLuong = $('#txtsoLuong').val();
-                    $.ajax({
-                        url: '/api/cart/add',
-                        type: "POST",
-                        dataType: "JSON",
-                        data: {
-                            productID: productid,
-                            amount: soLuong
-                        },
-                        success: function (response) {
-                            loadHeaderCart();
-                            location.reload();
-                        },
-                        error: function (error) {
-                            alert("Lỗi: " + error.responseText);
-                        }
-                    });
-                });
-            });
-            function loadHeaderCart() {
-                $("#miniCart").load("/AjaxContent/HeaderCart");
-                $("#numberCart").load("/AjaxContent/NumberCart");
-            }
-        });
-    </script>
+    <script src="~/js/addCart.js"></script>
 }

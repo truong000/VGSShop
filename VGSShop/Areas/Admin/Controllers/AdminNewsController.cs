@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,6 +16,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize()]
     public class AdminNewsController : Controller
     {
         private readonly VGSShopContext _context;
@@ -88,6 +90,12 @@ namespace VGSShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PostId,Title,Scontents,Contents,Thumb,Published,Alias,CreatedDate,Author,AccountId,Tags,CatId,IsHot,IsNewfeed,MetaKey,MetaDesc,Views")] News news, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
+            if (!User.Identity.IsAuthenticated) Response.Redirect("/dang-nhap-admin.html");
+            var taiKhoanID = HttpContext.Session.GetString("AccountId");
+            if (taiKhoanID == null) return RedirectToAction("Login", "Account", new { Area = "Admin" });
+            var admin = _context.Accounts.AsNoTracking()
+                    .SingleOrDefault(x => x.AccountId == Convert.ToInt32(taiKhoanID));
+
             if (ModelState.IsValid)
             {
                 //Xử lý hình ảnh thumb
@@ -100,6 +108,8 @@ namespace VGSShop.Areas.Admin.Controllers
                 if (string.IsNullOrEmpty(news.Thumb)) news.Thumb = "default.jpg";
                 news.Alias = Utilities.ToUnsignString(news.Title);
                 news.CreatedDate = DateTime.Now;
+                news.Author = admin.FullName;
+                news.AccountId = admin.AccountId;
                 _context.Add(news);
                 await _context.SaveChangesAsync();
                 _notyfService.Success("Thêm mới thành công");
@@ -131,6 +141,11 @@ namespace VGSShop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("PostId,Title,Scontents,Contents,Thumb,Published,Alias,CreatedDate,Author,AccountId,Tags,CatId,IsHot,IsNewfeed,MetaKey,MetaDesc,Views")] News news, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
+            if (!User.Identity.IsAuthenticated) Response.Redirect("/dang-nhap-admin.html");
+            var taiKhoanID = HttpContext.Session.GetString("AccountId");
+            if (taiKhoanID == null) return RedirectToAction("Login", "Account", new { Area = "Admin" });
+            var admin = _context.Accounts.AsNoTracking()
+                    .SingleOrDefault(x => x.AccountId == Convert.ToInt32(taiKhoanID));
             if (id != news.PostId)
             {
                 return NotFound();

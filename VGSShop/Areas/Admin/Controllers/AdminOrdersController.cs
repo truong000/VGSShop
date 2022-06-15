@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +14,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize()]
     public class AdminOrdersController : Controller
     {
         private readonly VGSShopContext _context;

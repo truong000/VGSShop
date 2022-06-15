@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ using VGSShop.Models;
 
 namespace VGSShop.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+
     public class SearchController : Controller
     {
         private readonly VGSShopContext _context;

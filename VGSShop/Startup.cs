@@ -2,21 +2,15 @@ using AspNetCoreHero.ToastNotification;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-using System.Threading.Tasks;
 using VGSShop.Models;
 
 namespace VGSShop
@@ -41,12 +35,11 @@ namespace VGSShop
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(p =>
                     {
-                        p.LoginPath = "/dang-nhap-admin.html";
-                        p.LogoutPath = "/dang-xuat-admin.html";
                         p.LoginPath = "/dang-nhap.html";
                         p.LogoutPath = "/dang-xuat.html";
                         p.AccessDeniedPath = "/";
                     });
+
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddSingleton<HtmlEncoder>(HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
@@ -93,7 +86,6 @@ namespace VGSShop
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-           
         }
     }
 }

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.3" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
@@ -16,8 +17,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="MySql.Data.EntityFramework" Version="8.0.29" />
     <PackageReference Include="PagedList.Core.Mvc" Version="3.0.0" />
     <PackageReference Include="summernote.editor" Version="0.8.10" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,30 +11,27 @@
                         <a href="@url">
                             <img class="img-full" src="~/images/product/@item.Thumb" alt="@item.Title">
                         </a>
-                        @*<div class="product-add-action">
+                        <div class="product-add-action">
                             <ul>
                                 <li>
-                                    <a href="cart.html">
+                                    <a href="javascript:void(0)" class="add-to-cart" data-ProductId="@item.ProductId">
                                         <i class="pe-7s-cart"></i>
                                     </a>
                                 </li>
                             </ul>
-                        </div>*@
+                        </div>
                     </div>
                     <div class="product-content">
                         <a class="product-name" href="@url">@item.ProductName</a>
                         <div class="price-box pb-1">
-                            <span class="new-price">@item.Price.Value.ToString("#,##0") VNĐ</span>
+                            <span class="new-price">@item.Price.ToString("#,##0") VNĐ</span>
                         </div>
-                        <div class="rating-box">
-                            <ul>
-                                <li><i class="pe-7s-star"></i></li>
-                                <li><i class="pe-7s-star"></i></li>
-                                <li><i class="pe-7s-star"></i></li>
-                                <li><i class="pe-7s-star"></i></li>
-                                <li><i class="pe-7s-star"></i></li>
-                            </ul>
-                        </div>
+                        @if (item.Discount.HasValue)
+                        {
+                            <del>@item.Discount.Value.ToString("N0")</del>
+                        }
+                        @*<span>@item.Price.ToString("#,##0")</span>*@
+
                     </div>
                 </div>
             </div>

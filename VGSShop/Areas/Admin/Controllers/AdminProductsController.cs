@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +17,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+
     public class AdminProductsController : Controller
     {
         private readonly VGSShopContext _context;
@@ -96,11 +99,12 @@ namespace VGSShop.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,MetaDesc,MetaKey,UnitslnStock")] Product product, Microsoft.AspNetCore.Http.IFormFile fThumb)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,MetaDesc,MetaKey,UnitslnStock")] Product product, Microsoft.AspNetCore.Http.IFormFile fThumb, IFormFile[] fMoreThumb)
         {
             if (ModelState.IsValid)
             {
                 product.ProductName = Utilities.ToTitleCase(product.ProductName);
+                //List<string> moreImage = new List<string>(product.MoreThumb);
                 if(fThumb != null)
                 {
                     string extension = Path.GetExtension(fThumb.FileName);
@@ -108,6 +112,19 @@ namespace VGSShop.Areas.Admin.Controllers
                     product.Thumb = await Utilities.UploadFile(fThumb, @"product", image.ToLower());
                 }
                 if (string.IsNullOrEmpty(product.Thumb)) product.Thumb = "default.jpg";
+
+                //if (fMoreThumb != null)
+                //{
+                //    product.MoreThumb = new List<string>(product.MoreThumb);
+                //    foreach (IFormFile photo in fMoreThumb)
+                //    {
+                //        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", photo.FileName);
+                //        var stream = new FileStream(path, FileMode.Create);
+                //        photo.CopyToAsync(stream);
+                //        product.MoreThumb.Add(photo.FileName);
+                //    }
+                //}
+                //ViewBag.product = product;
                 product.Alias = Utilities.ToUnsignString(product.ProductName);
                 product.DateModified = DateTime.Now;
                 product.DateCreated = DateTime.Now;

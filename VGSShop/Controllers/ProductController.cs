@@ -53,25 +53,48 @@ namespace VGSShop.Controllers
             return Json(product);
         }
         [Route("/{Alias}", Name = "ListProduct")]
-        public IActionResult List(string Alias, int page = 1)
+        public IActionResult List(string Alias, int page = 1, string sort = "")
         {
             try
             {
+
                 var pageSize = 10; //20
                 var category = _context.Categories.AsNoTracking().SingleOrDefault(x=>x.Alias== Alias);
                 var lsProduct = _context.Products
                     .AsNoTracking()
-                    .Where(x => x.CatId == category.CatId)
-                    .OrderByDescending(x => x.DateCreated);
+                    .Where(x => x.CatId == category.CatId);
+
+                switch (sort)
+                {
+                    case "discount":
+                        lsProduct = lsProduct.OrderByDescending(x => x.Discount.HasValue);
+                        break;
+                    case "price":
+                        lsProduct = lsProduct.OrderBy(x => x.Price);
+                        break;
+                    default:
+                        lsProduct = lsProduct.OrderByDescending(x => x.DateCreated);
+                        break;
+                }
                 PagedList<Product> models = new PagedList<Product>(lsProduct, page, pageSize);
                 ViewBag.CurrentPage = page;
                 ViewBag.CurrentCat = category;
+                //ViewBag.ListProduct = lsProduct;
                 return View(models);
             }
             catch
             {
                 return RedirectToAction("Index", "Home");
             }
+        }
+        public IActionResult Filtter(string sort = "")
+        {
+            var url = $"/Product/List?sort={sort}";
+            if (sort == null)
+            {
+                url = $"/Product/List?";
+            }
+            return Json(new { status = "success", redirectUrl = url });
         }
         [Route("/{Alias}-{id}.html", Name = "ProductDetails")]
         public IActionResult Detail(int id)

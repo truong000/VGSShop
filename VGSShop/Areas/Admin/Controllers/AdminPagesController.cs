@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+
     public class AdminPagesController : Controller
     {
         private readonly VGSShopContext _context;

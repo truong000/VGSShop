@@ -1,4 +1,5 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +13,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize()]
     public class AdminBannerController : Controller
     {
         private readonly VGSShopContext _context;

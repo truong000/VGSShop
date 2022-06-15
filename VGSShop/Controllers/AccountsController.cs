@@ -159,9 +159,11 @@ namespace VGSShop.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
+
             if (taikhoanID != null)
             {
                 return RedirectToAction("DangKyTaiKhoan", "Accounts");
+
             }
             return View();
         }
@@ -188,7 +190,7 @@ namespace VGSShop.Controllers
                     string pass = (customer.Password + khachhang.Salt.Trim()).ToMD5();
                     if (khachhang.Password != pass)
                     {
-                        _notyfService.Success("Thông tin đăng nhập không chính xác");
+                        _notyfService.Error("Thông tin đăng nhập không chính xác");
                         return View(customer);
                     }
                     //Kiểm tra tài khoản có được Active hay là không
@@ -212,7 +214,14 @@ namespace VGSShop.Controllers
                     ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     await HttpContext.SignInAsync(claimsPrincipal);
                     _notyfService.Success("Đăng nhập thành công");
-                    return RedirectToAction("Dashboard", "Accounts");
+                    if (string.IsNullOrEmpty(returnUrl))
+                    {
+                        return RedirectToAction("Dashboard", "Accounts");
+                    }
+                    else
+                    {
+                        return Redirect(returnUrl);
+                    }
                 }
             }
             catch

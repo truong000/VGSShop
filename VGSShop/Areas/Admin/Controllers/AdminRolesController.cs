@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+
     public class AdminRolesController : Controller
     {
         private readonly VGSShopContext _context;
@@ -27,7 +28,21 @@ namespace VGSShop.Areas.Admin.Controllers
         // GET: Admin/AdminRoles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Roles.ToListAsync());
+            if (!User.Identity.IsAuthenticated) Response.Redirect("/dang-nhap-admin.html");
+            var taiKhoanID = HttpContext.Session.GetString("AccountId");
+            if (taiKhoanID == null) return RedirectToAction("Login", "Account", new { Area = "Admin" });
+            var admin = _context.Accounts.AsNoTracking()
+                    .SingleOrDefault(x => x.AccountId == Convert.ToInt32(taiKhoanID));
+            if (admin.RoleId != 4)
+            {
+                _notyfService.Warning("Chỉ quản trị viên mới được phép sửa dụng chức năng này");
+                return RedirectToAction("Index", "AdminHome", new { Area = "Admin" });
+            }
+            else
+            {
+                return View(await _context.Roles.ToListAsync());
+            }
+           
         }
 
         // GET: Admin/AdminRoles/Details/5

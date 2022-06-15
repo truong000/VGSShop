@@ -47,7 +47,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Tên sản phẩm</th>
-                        @*<th>Danh mục</th>*@
                         <th>Giá</th>
                         <th>Tồn kho</th>
                         <th>Trạng thái</th>
@@ -65,7 +64,7 @@
                                     @item.ProductName
                                 </td>
                                 @*<td>@item.Cat.CatName</td>*@
-                                <td>@item.Price.Value.ToString("#,##0") VNĐ</td>
+                                <td>@item.Price.ToString("#,##0") VNĐ</td>
                                 <td>@item.UnitslnStock</td>
                                 <td><a href="#" class="btn-active btn btn-info btn-tone m-r-5" data-id="@item.ProductId">@Html.Raw(item.Active ? "<strong>Kích hoạt</strong>" : "Khoá")</a></td>
                                 <td class="text-right">

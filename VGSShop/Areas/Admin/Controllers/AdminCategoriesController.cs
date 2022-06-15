@@ -15,6 +15,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize()]
     public class AdminCategoriesController : Controller
     {
         private readonly VGSShopContext _context;

@@ -16,7 +16,7 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize()]
     public class AdminAccountsController : Controller
     {
         private readonly VGSShopContext _context;
@@ -37,8 +37,13 @@ namespace VGSShop.Areas.Admin.Controllers
             if (taiKhoanID == null) return RedirectToAction("Login", "Account", new { Area = "Admin" });
             var admin = _context.Accounts.AsNoTracking()
                     .SingleOrDefault(x => x.AccountId == Convert.ToInt32(taiKhoanID));
-            if(admin.RoleId == 4)
+            if(admin.RoleId != 4)
             {
+                _notyfService.Warning("Chỉ quản trị viên mới được phép sửa dụng chức năng này");
+                return RedirectToAction("Index", "AdminHome", new { Area = "Admin" });
+            }
+            else
+            {                
                 ViewData["QuyenTruyCap"] = new SelectList(_context.Roles, "RoleId", "Description");
                 List<SelectListItem> lsTrangThai = new List<SelectListItem>();
                 lsTrangThai.Add(new SelectListItem() { Text = "Kích hoạt", Value = "1" });
@@ -46,11 +51,6 @@ namespace VGSShop.Areas.Admin.Controllers
                 ViewData["lsTrangThai"] = lsTrangThai;
                 var vGSShopContext = _context.Accounts.Include(a => a.Role);
                 return View(await vGSShopContext.ToListAsync());
-            }
-            else
-            {
-                _notyfService.Warning("Chỉ quản trị viên mới được phép sửa dụng chức năng này");
-                return RedirectToAction("Index", "AdminHome", new { Area = "Admin" });
             }
            
         }

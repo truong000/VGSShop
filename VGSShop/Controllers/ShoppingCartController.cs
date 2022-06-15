@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace VGSShop.Controllers
         //Thêm mới sản phẩm vào Cart
         [HttpPost]
         [Route("api/cart/add")]
-        public IActionResult AddToCart(int productID, int? amount)
+        public IActionResult AddToCart(int productID, int amount = 1)
         {
             List<CartItem> gioHang = Giohang;
             try
@@ -45,16 +46,16 @@ namespace VGSShop.Controllers
                 //Cart -- đã có sản sản phẩm ở trong
                 if (item != null)
                 {
-                    item.amount = item.amount + amount.Value;
+                    item.amount = item.amount + amount;
                     //Lưu lại SS
                     HttpContext.Session.Set<List<CartItem>>("Giohang", gioHang);
                 }
                 else
                 {
-                    Product hanghoa = _context.Products.SingleOrDefault(p => p.ProductId == productID);
+                    Product hanghoa = _context.Products.AsNoTracking().SingleOrDefault(p => p.ProductId == productID);
+                    if (amount > hanghoa.UnitslnStock) amount = hanghoa.UnitslnStock.Value;
                     item = new CartItem
                     {
-                        amount = amount.HasValue ? amount.Value : 1,
                         product = hanghoa
                     };
                     gioHang.Add(item);// Thêm sp vào cart
@@ -69,6 +70,7 @@ namespace VGSShop.Controllers
             }
 
         }
+        
         //Cập nhật Cart
         [HttpPost]
         [Route("api/cart/update")]

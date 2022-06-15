@@ -17,9 +17,11 @@ namespace VGSShop.Models
         public string ShortDesc { get; set; }
         public string Description { get; set; }
         public int? CatId { get; set; }
-        public int? Price { get; set; }
-        public int? Discount { get; set; }
+        public decimal Price { get; set; }
+        public decimal OriginalPrice { get; set; }
+        public decimal? Discount { get; set; }
         public string Thumb { get; set; }
+        public string MoreThumb { get; set; }
         public string Video { get; set; }
         public DateTime? DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
@@ -32,7 +34,7 @@ namespace VGSShop.Models
         public string MetaDesc { get; set; }
         public string MetaKey { get; set; }
         public int? UnitslnStock { get; set; }
-
+        //public int? OgirinalPrice { get; set; }
         public virtual Category Cat { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }

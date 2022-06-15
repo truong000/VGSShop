@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Thống kê";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<form>
+    <div class="row">
+      
+        <div class="col">
+            <input type="date" id="txtstart" class="form-control" placeholder="Ngày bắt đầu">
+        </div>
+        <div class="col">
+            <input type="date" id="txtstop" class="form-control" placeholder="Ngày kết thúc">
+        </div>
+    </div>
+    <button type="submit" id="btnSubmit" class="btn btn-primary">Thống kê</button>
+    <h1 id="result">0 VNĐ</h1>
+</form>
+
+
+@section Script {
+    <script>
+        $(document).ready(function () {
+            $("#btnSubmit").click(function () {
+                var ngaybatdau = $("#txtstart").val();
+                var ngayketthuc = $("#txtstop").val();
+                $.ajax({
+                    url: '/Admin/AdminThongke/ThongKe/',
+                    datatype: "json",
+                    type: "POST",
+                    data: { datestart: ngaybatdau , datestop : ngayketthuc},
+                    success: function (results) {
+                        alert(results);
+                        $("#result").html("");
+                        $("#result").html(results);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+        });
+    </script>
+}

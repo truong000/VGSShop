@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using VGSShop.Extension;
 using VGSShop.Helpers;
 using VGSShop.Models;
@@ -18,11 +17,13 @@ namespace VGSShop.Controllers
     {
         private readonly VGSShopContext _context;
         public INotyfService _notyfService { get; }
+
         public CheckoutController(VGSShopContext context, INotyfService notyfService)
         {
             _context = context;
             _notyfService = notyfService;
         }
+
         //Cart
         public List<CartItem> Giohang
         {
@@ -36,6 +37,7 @@ namespace VGSShop.Controllers
                 return gh;
             }
         }
+
         //GET: checkout/Index
         [Route("checkout.html", Name = "Checkout")]
         public IActionResult Index(string returnUrl = null)
@@ -44,7 +46,7 @@ namespace VGSShop.Controllers
             var cart = HttpContext.Session.Get<List<CartItem>>("Giohang");
             var taikhoanID = HttpContext.Session.GetString("CustomerId");
             MuahangVM model = new MuahangVM();
-            if(taikhoanID != null)
+            if (taikhoanID != null)
             {
                 var khachhang = _context.Customers.AsNoTracking()
                     .SingleOrDefault(x => x.CustomerId == Convert.ToInt32(taikhoanID));
@@ -54,7 +56,7 @@ namespace VGSShop.Controllers
                 model.Phone = khachhang.Phone;
                 model.Address = khachhang.Adress;
             }
-            ViewData["lsTinhThanh"] = new SelectList(_context.Locations.Where(x => x.Levels == 1).OrderBy(x => x.Type).ToList(), "LocationId", "Name");
+           
             ViewBag.Giohang = cart;
             return View(model);
         }
@@ -75,10 +77,6 @@ namespace VGSShop.Controllers
                 model.Email = khachhang.Email;
                 model.Phone = khachhang.Phone;
                 model.Address = khachhang.Adress;
-
-                //khachhang.LocationId = muahang.TinhThanh;
-                //khachhang.District = muahang.QuanHuyen;
-                //khachhang.Ward = muahang.PhuongXa;
                 khachhang.Adress = muahang.Address;
                 _context.Update(khachhang);
                 _context.SaveChanges();
@@ -91,18 +89,15 @@ namespace VGSShop.Controllers
                     Order donhang = new Order();
                     donhang.CustomerId = model.CustomerId;
                     donhang.Address = model.Address;
-                    //donhang.LocationId = model.TinhThanh;
-                    //donhang.District = model.QuanHuyen;
-                    //donhang.Ward = model.PhuongXa;
                     donhang.OrderDate = DateTime.Now;
                     donhang.TransactStatusId = 1; // Đơn hàng mới
                     donhang.Deleted = false;
                     donhang.Paid = false;
                     donhang.Note = Utilities.StripHTML(model.Note);
-                    donhang.TotalMoney = Convert.ToInt32(cart.Sum(x =>x.TotalMoney));                       
+                    donhang.TotalMoney = Convert.ToInt32(cart.Sum(x => x.TotalMoney));
                     _context.Add(donhang);
                     _context.SaveChanges();
-                  
+
                     //Tạo danh sách đơn hàng
                     foreach (var item in cart)
                     {
@@ -116,6 +111,22 @@ namespace VGSShop.Controllers
                         _context.Add(orderDetails);
                     }
                     _context.SaveChanges();
+
+                    // Cập nhật lại số lượng hàng trong kho
+
+                    foreach (var item in cart)
+                    {
+                        var found = _context.Products.AsNoTracking().SingleOrDefault(x => x.ProductId == item.product.ProductId);
+                        if (found != null)
+                        {
+                            found.UnitslnStock = found.UnitslnStock - item.amount;
+                            _context.Update(found);
+                            _context.SaveChanges();
+                        }
+                    }
+
+
+
                     //Xóa giỏ hàng
                     HttpContext.Session.Remove("Giohang");
                     //Thông báo
@@ -124,7 +135,7 @@ namespace VGSShop.Controllers
                     return RedirectToAction("Dashboard", "Accounts");
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
                 ViewData["lsTinhThanh"] = new SelectList(_context.Locations.Where(x => x.Levels == 1).OrderBy(x => x.Type).ToList(), "LocationId", "Name");
                 ViewBag.Giohang = cart;
@@ -134,6 +145,7 @@ namespace VGSShop.Controllers
             ViewBag.Giohang = cart;
             return View(model);
         }
+
         [Route("dat-hang-thanh-cong.html", Name = "Success")]
         public IActionResult Success()
         {
@@ -149,7 +161,7 @@ namespace VGSShop.Controllers
                 var donhang = _context.Orders.Where(x => x.CustomerId == Convert.ToInt32(taikhoanID))
                     .OrderByDescending(x => x.OrderDate);
                 MuaHangSuccessVM successVM = new MuaHangSuccessVM();
-                successVM.FullName = khachhang.FullName; 
+                successVM.FullName = khachhang.FullName;
                 successVM.Phone = khachhang.Phone;
                 successVM.Address = khachhang.Adress;
                 return View(successVM);
@@ -159,5 +171,6 @@ namespace VGSShop.Controllers
                 return View();
             }
         }
-    }   
+
+    }
 }
