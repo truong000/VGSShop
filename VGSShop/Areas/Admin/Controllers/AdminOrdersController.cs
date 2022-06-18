@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using PagedList.Core;
 using VGSShop.Models;
 
@@ -26,19 +28,47 @@ namespace VGSShop.Areas.Admin.Controllers
         }
 
         // GET: Admin/AdminOrders
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, int TransactStatusID = 0)
         {
             if (!User.Identity.IsAuthenticated) Response.Redirect("/dang-nhap-admin.html");
             var taiKhoanID = HttpContext.Session.GetString("AccountId");
             if (taiKhoanID == null) return RedirectToAction("Login", "Account", new { Area = "Admin" });
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 20; //20
-            var Orders = _context.Orders.Include(o => o.Customer).Include(o => o.TransactStatus)
+            List<Order> lsNews = new List<Order>();
+            if (TransactStatusID != 0)
+            {
+                lsNews = _context.Orders
                 .AsNoTracking()
-                .OrderByDescending(x => x.OrderDate);
-            PagedList<Order> models = new PagedList<Order>(Orders, pageNumber, pageSize);
+                .Where(x => x.TransactStatusId == TransactStatusID)
+                .Include(x => x.Customer)
+                .Include(o => o.TransactStatus)
+                .OrderByDescending(x => x.OrderDate).ToList();
+
+            }
+            else
+            {
+                lsNews = _context.Orders
+                .AsNoTracking()
+                .Include(x => x.Customer)
+                .Include(x => x.TransactStatus)
+                .OrderByDescending(x => x.OrderDate).ToList();
+
+            }
+            PagedList<Order> models = new PagedList<Order>(lsNews.AsQueryable(), pageNumber, pageSize);         
+            ViewBag.TransactStatusID = TransactStatusID;
             ViewBag.CurrentPage = pageNumber;
+            ViewData["TrangThaiDonHang"] = new SelectList(_context.TransactStatuses, "TransactStatusId", "Status", TransactStatusID);
             return View(models);
+        }
+        public IActionResult Filtter(int TransactStatusID = 0)
+        {
+            var url = $"/Admin/AdminOrders?TransactStatusID={TransactStatusID}";
+            if (TransactStatusID == 0)
+            {
+                url = $"/Admin/AdminOrders";
+            }
+            return Json(new { status = "success", redirectUrl = url });
         }
         public async Task<IActionResult> ChangeStatus(int? id)
         {
@@ -256,6 +286,58 @@ namespace VGSShop.Areas.Admin.Controllers
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.OrderId == id);
+        }
+        public IActionResult ExportToExcel()
+        {
+            List<Order> lsNews = new List<Order>();
+            lsNews = _context.Orders
+                .AsNoTracking()
+                .Include(x => x.Customer)
+                .Include(x => x.TransactStatus)
+                .Include(x => x.OrderDetails)
+                .OrderByDescending(x => x.OrderDate).ToList();
+
+            byte[] fileContents;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("ThongTinHoaDon");
+            Sheet.Cells["A1"].Value = "Mã hóa đơn";
+            Sheet.Cells["B1"].Value = "Họ và tên";
+            Sheet.Cells["C1"].Value = "Ngày tạo";
+            Sheet.Cells["D1"].Value = "Tổng hóa đơn";
+            Sheet.Cells["E1"].Value = "Địa chỉ";
+            Sheet.Cells["F1"].Value = "Số điện thoại";
+            Sheet.Cells["G1"].Value = "Trạng thái đơn hàng";
+
+            int row = 2;
+            foreach (var item in lsNews)
+            {
+                Sheet.Cells[string.Format("A{0}", row)].Value = item.OrderId;
+                Sheet.Cells[string.Format("B{0}", row)].Value = item.Customer.FullName;
+                Sheet.Cells[string.Format("C{0}", row)].Value = item.OrderDate;
+                Sheet.Cells[string.Format("D{0}", row)].Value = item.TotalMoney;
+                Sheet.Cells[string.Format("E{0}", row)].Value = item.Address;
+                Sheet.Cells[string.Format("F{0}", row)].Value = item.Customer.Phone;
+                Sheet.Cells[string.Format("G{0}", row)].Value = item.TransactStatus.Status;
+                row++;
+            }
+
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            fileContents = Ep.GetAsByteArray();
+
+            if (fileContents == null || fileContents.Length == 0)
+            {
+                return NotFound();
+            }
+
+            return File(
+                fileContents: fileContents,
+                contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileDownloadName: "DanhSachDonHang.xlsx"
+            );
         }
     }
 }

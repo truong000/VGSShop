@@ -18,6 +18,17 @@ AdminOrders
     <div class="card-body">
         <div class="table-responsive">
             <h2>Danh sách đơn hàng</h2>
+            <div class="col-md-5">
+                <div class="input-affix m-v-10">
+                    <select class="custom-select" id="txtCatID" name="txtCatID" style="min-width:200px; margin-top:10px; " asp-items="ViewBag.TrangThaiDonHang">
+                        <option selected>Chọn tất cả </option>
+                        <option value="0" disabled selected>Lọc theo trạng thái đơn hàng</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-right" style="overflow: hidden; padding: 1px 0px 0px 0px; margin-top: -47px; margin-bottom: 10px;">
+                <button type="button" class="btn btn-info" onclick="location.href='@Url.Action("ExportToExcel", "AdminOrders")'">Export To Excel</button>
+            </div>
             <table class="table table-hover e-commerce-table">
                 <thead>
                     <tr>
@@ -29,7 +40,7 @@ AdminOrders
                         <th>THAO TÁC</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="records_table">
                     @if (Model != null)
                     {
                         @foreach (var item in Model)
@@ -59,3 +70,60 @@ AdminOrders
         </div>
     </div>
 </div>
+@section Script{
+    <script>
+        $(document).ready(function () {
+            jQuery("#txtCatID").change(function () {
+                var catID = jQuery(this).children(":selected").attr("value");
+                catID = parseFloat(catID);
+                $('#txtCatID option')
+                    .removeAttr('selected');
+                $("#txtCatID > [value=" + catID + "]").attr("selected", "true");
+
+                //var gvID = jQuery(this).children(":selected").attr("value");
+                //gvID = parseFloat(gvID);
+                //$('#txtTeacherID option')
+                //    .removeAttr('selected');
+                //$("#txtTeacherID > [value=" + gvID + "]").attr("selected", "true");
+
+                $.ajax({
+                    url: '/Admin/AdminOrders/Filtter',
+                    datatype: "json",
+                    type: "GET",
+                    data: {
+                        TransactStatusID: catID,
+                    },
+                    async: true,
+                    success: function (results) {
+                        if (results.status == "success") {
+                            window.location.href = results.redirectUrl;
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('Đã xảy ra lỗi');
+                    }
+                });
+            });
+
+            $("#keyword").keyup(function () {
+                var strkeyword = $('#keyword').val();
+                $.ajax({
+                    url: '/Admin/Search/FindProduct/',
+                    datatype: "json",
+                    type: "POST",
+                    data: { keyword: strkeyword },
+                    async: true,
+                    success: function (results) {
+                        $("#records_table").html("");
+                        $("#records_table").html(results);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script src="~/AdminAssets/js/controller/feedbackControllerScript.js"></script>
+}

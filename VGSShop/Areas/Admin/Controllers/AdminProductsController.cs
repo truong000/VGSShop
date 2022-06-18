@@ -32,7 +32,7 @@ namespace VGSShop.Areas.Admin.Controllers
         public IActionResult Index(int page = 1, int CatID = 0)
         {
             var pageNumber = page;
-            var pageSize = 20;
+            var pageSize = 15;
 
             List<Product> lsNews = new List<Product>();
             if (CatID != 0)

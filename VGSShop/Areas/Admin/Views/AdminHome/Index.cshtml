@@ -84,6 +84,7 @@
 
 @section Script {
     <script>
+
         $(document).ready(function () {
             $("#btnSubmit").click(function () {
                 var ngaybatdau = $("#txtstart").val();
@@ -92,9 +93,10 @@
                     url: '/Admin/AdminHome/ThongKe/',
                     datatype: "json",
                     type: "POST",
-                    data: { datestart: ngaybatdau, datestop: ngayketthuc },
+                    data: { datestart: ngaybatdau, datestop: ngayketthuc},
                     success: function (results) {
-/*                        $("#result").html("");*/
+/*                        window.console && console.log('result');*/
+                        $("#result").html("");
                         $("#result").html(results);
                     },
                     error: function (xhr) {

@@ -32,7 +32,7 @@ namespace VGSShop.Areas.Admin.Controllers
         public IActionResult ThongKe(DateTime datestart, DateTime datestop)
         {
             var data = _context.Orders.AsNoTracking()
-                .Where(x => x.OrderDate.Year >= datestart.Year && x.OrderDate.Year <= datestop.Year && x.OrderDate.Month >= datestart.Month && x.OrderDate.Month <= datestop.Month && x.OrderDate.Day >= datestart.Day && x.OrderDate.Day <= datestop.Day)
+                .Where(x => x.OrderDate.Year >= datestart.Year && x.OrderDate.Year <= datestop.Year && x.OrderDate.Month >= datestart.Month && x.OrderDate.Month <= datestop.Month && x.OrderDate.Day >= datestart.Day && x.OrderDate.Day <= datestop.Day )
                 .Sum(x => x.TotalMoney);
             string model = data.ToString("#,##0 VNĐ");
             return Json(model);

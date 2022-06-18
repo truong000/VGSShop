@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VGSShop.Dao;
@@ -14,10 +13,12 @@ namespace VGSShop.Controllers
     public class ProductController : Controller
     {
         private readonly VGSShopContext _context;
+
         public ProductController(VGSShopContext context)
         {
             _context = context;
         }
+
         [HttpPost]
         [Route("shop.html", Name = "ShopProduct")]
         public IActionResult Index(int? page)
@@ -39,39 +40,66 @@ namespace VGSShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
         [HttpPost]
         public JsonResult AutoComplete(string prefix)
         {
             var product = (from Product in _context.Products
-                             where Product.ProductName.StartsWith(prefix)
-                             select new
-                             {
-                                 label = Product.ProductName,
-                                 val = Product.CatId
-                             }).ToList();
+                           where Product.ProductName.StartsWith(prefix)
+                           select new
+                           {
+                               label = Product.ProductName,
+                               val = Product.CatId
+                           }).ToList();
 
             return Json(product);
         }
+
+        //[Route("/{Alias}", Name = "ListProduct")]
+        //public IActionResult List(string Alias, int page = 1, string sort = "")
+        //{
+        //    try
+        //    {
+        //        var pageSize = 10; //20
+        //        var category = _context.Categories.AsNoTracking().SingleOrDefault(x => x.Alias == Alias);
+        //        var lsProduct = _context.Products
+        //            .AsNoTracking()
+        //            .Where(x => x.CatId == category.CatId)
+        //            .OrderByDescending(x => x.DateCreated);
+        //        PagedList<Product> models = new PagedList<Product>(lsProduct, page, pageSize);
+        //        ViewBag.CurrentPage = page;
+        //        ViewBag.CurrentCat = category;
+        //        return View(models);
+        //    }
+        //    catch
+        //    {
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //}
+
         [Route("/{Alias}", Name = "ListProduct")]
-        public IActionResult List(string Alias, int page = 1, string sort = "")
+        public async Task<IActionResult> List(string sortOrder, string Alias, int page = 1)
         {
             try
             {
-
+                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+                ViewData["DateSortParm1"] = sortOrder == "Date" ? "date_desc" : "discount";
+                //ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
                 var pageSize = 10; //20
-                var category = _context.Categories.AsNoTracking().SingleOrDefault(x=>x.Alias== Alias);
+                var category = _context.Categories.AsNoTracking().SingleOrDefault(x => x.Alias == Alias);
                 var lsProduct = _context.Products
                     .AsNoTracking()
                     .Where(x => x.CatId == category.CatId);
-
-                switch (sort)
+                switch (sortOrder)
                 {
+                    case "Date":
+                        lsProduct = lsProduct.OrderBy(s => s.Price);
+                        break;
+
                     case "discount":
                         lsProduct = lsProduct.OrderByDescending(x => x.Discount.HasValue);
                         break;
-                    case "price":
-                        lsProduct = lsProduct.OrderBy(x => x.Price);
-                        break;
+
                     default:
                         lsProduct = lsProduct.OrderByDescending(x => x.DateCreated);
                         break;
@@ -79,7 +107,7 @@ namespace VGSShop.Controllers
                 PagedList<Product> models = new PagedList<Product>(lsProduct, page, pageSize);
                 ViewBag.CurrentPage = page;
                 ViewBag.CurrentCat = category;
-                //ViewBag.ListProduct = lsProduct;
+                //return View(models);
                 return View(models);
             }
             catch
@@ -87,15 +115,7 @@ namespace VGSShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-        public IActionResult Filtter(string sort = "")
-        {
-            var url = $"/Product/List?sort={sort}";
-            if (sort == null)
-            {
-                url = $"/Product/List?";
-            }
-            return Json(new { status = "success", redirectUrl = url });
-        }
+
         [Route("/{Alias}-{id}.html", Name = "ProductDetails")]
         public IActionResult Detail(int id)
         {
@@ -119,6 +139,7 @@ namespace VGSShop.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
         public JsonResult ListName(string q)
         {
             var data = new ProductDao().ListName(q);
@@ -128,6 +149,7 @@ namespace VGSShop.Controllers
                 status = true
             });
         }
+
         public ActionResult Search(string keyword, int page = 1, int pageSize = 1)
         {
             int totalRecord = 0;
@@ -149,6 +171,5 @@ namespace VGSShop.Controllers
 
             return View(model);
         }
-
     }
 }

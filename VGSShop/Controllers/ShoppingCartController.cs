@@ -36,7 +36,7 @@ namespace VGSShop.Controllers
         //Thêm mới sản phẩm vào Cart
         [HttpPost]
         [Route("api/cart/add")]
-        public IActionResult AddToCart(int productID, int amount = 1)
+        public IActionResult AddToCart(int productID, int? amount)
         {
             List<CartItem> gioHang = Giohang;
             try
@@ -46,7 +46,7 @@ namespace VGSShop.Controllers
                 //Cart -- đã có sản sản phẩm ở trong
                 if (item != null)
                 {
-                    item.amount = item.amount + amount;
+                    item.amount = item.amount + amount.Value;
                     //Lưu lại SS
                     HttpContext.Session.Set<List<CartItem>>("Giohang", gioHang);
                 }
@@ -56,7 +56,9 @@ namespace VGSShop.Controllers
                     if (amount > hanghoa.UnitslnStock) amount = hanghoa.UnitslnStock.Value;
                     item = new CartItem
                     {
+                        amount = amount.HasValue ? amount.Value : 1,
                         product = hanghoa
+
                     };
                     gioHang.Add(item);// Thêm sp vào cart
                 }
