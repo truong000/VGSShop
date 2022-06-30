@@ -1,10 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VGSShop.Models;
 using VGSShop.ModelsView;
 
@@ -14,16 +10,19 @@ namespace VGSShop.Controllers
     {
         private readonly VGSShopContext _context;
         public INotyfService _notyfService { get; }
+
         public FeedBackController(VGSShopContext context, INotyfService notyfService)
         {
             _context = context;
             _notyfService = notyfService;
         }
+
         [Route("lien-he.html", Name = "FeedBack")]
         public IActionResult FeedBack()
         {
             return View();
         }
+
         [HttpPost]
         public JsonResult Send(string name, string mobile, string address, string email, string content)
         {
@@ -34,7 +33,6 @@ namespace VGSShop.Controllers
             feedback.Phone = mobile;
             feedback.Content = content;
             feedback.Address = address;
-
             var id = new FeedBack_Dao().InsertFeedBack(feedback);
             if (id > 0)
             {
@@ -44,13 +42,11 @@ namespace VGSShop.Controllers
                 });
                 //send mail
             }
-
             else
                 return Json(new
                 {
                     status = false
                 });
         }
-
     }
 }

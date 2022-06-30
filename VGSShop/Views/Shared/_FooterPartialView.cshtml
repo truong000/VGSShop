@@ -1,4 +1,6 @@
-﻿<div class="footer-area">
+﻿
+<div class="footer-area">
+    @Html.AntiForgeryToken()
     <div class="footer-top section-space-y-axis-100 text-black" data-bg-color="#e5ddcc">
         <div class="container">
             <div class="row">
@@ -8,24 +10,8 @@
                             <a href="index.html">
                                 <img src="~/assets/images/logo/dark.png" alt="Logo">
                             </a>
-                        </div>
-                        <p class="short-desc mb-2">Lorem ipsum dolor sit amet, consectet adipi elit, sed do eius tempor incididun ut labore gthydolore. </p>
-                        <div class="widget-contact-info pb-6">
-                            <ul>
-                                <li>
-                                    <i class="pe-7s-phone"></i>
-                                    0353.988.513
-                                </li>
-                                <li>
-                                    <i class="pe-7s-map-marker"></i>
-                                    102, Phan Văn Hớn, Phường Tân Thới Nhất, Quận 12, Thành phố Hồ Chí Minh
-                                </li>
-                                <li>
-                                    <i class="pe-7s-mail"></i>
-                                    <a href="mailto://truongham090@gmail.com">truongham090@gmail.com</a>
-                                </li>
-                            </ul>
-                        </div>
+                        </div>                    
+                        @await Component.InvokeAsync("Footer")
                         <div class="payment-method">
                             <a href="javascript:void(0)">
                                 <img src="~/assets/images/payment/1.png" alt="Payment Method">
@@ -82,7 +68,7 @@
                             </li>
                         </ul>
                     </div>
-                </div>               
+                </div>
             </div>
         </div>
     </div>

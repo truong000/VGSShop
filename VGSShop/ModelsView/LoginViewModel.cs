@@ -18,7 +18,7 @@ namespace VGSShop.ModelsView
 
         [Display(Name = "Mật khẩu")]
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
-        [MinLength(5, ErrorMessage = "Mật khẩu ít nhất 5 ký tự")]
+        [MinLength(6, ErrorMessage = "Mật khẩu ít nhất 6 ký tự")]
         public string Password { get; set; }
     }
 }

@@ -54,11 +54,18 @@ namespace VGSShop.Controllers
                 .OrderByDescending(x => x.CreatedDate)
                 .Take(3)
                 .ToList();
+            var Banner = _context.Banners
+                .AsNoTracking()
+                .Where(x => x.Status == true)
+                .OrderByDescending(x => x.DisplayOrder)
+                .ToList();
+            model.Banners = Banner;
             model.Products = lsProductsViews;
             model.News = TinTuc;
             ViewBag.AllProduct = lsProduct;
             return View(model);
         }
+
         [Route("gioi-thieu.html", Name = "About")]
         public IActionResult About()
         {
@@ -108,5 +115,6 @@ namespace VGSShop.Controllers
 
             return View(model);
         }
+        
     }
 }

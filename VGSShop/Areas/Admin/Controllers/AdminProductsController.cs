@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PagedList.Core;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using VGSShop.Dao;
 using VGSShop.Helpers;
 using VGSShop.Models;
@@ -17,11 +15,11 @@ using VGSShop.Models;
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
     public class AdminProductsController : Controller
     {
         private readonly VGSShopContext _context;
         public INotyfService _notyfService { get; }
+
         public AdminProductsController(VGSShopContext context, INotyfService notyfService)
         {
             _context = context;
@@ -42,7 +40,6 @@ namespace VGSShop.Areas.Admin.Controllers
                 .Where(x => x.CatId == CatID)
                 .Include(x => x.Cat)
                 .OrderByDescending(x => x.ProductId).ToList();
-
             }
             else
             {
@@ -50,7 +47,6 @@ namespace VGSShop.Areas.Admin.Controllers
                 .AsNoTracking()
                 .Include(x => x.Cat)
                 .OrderByDescending(x => x.ProductId).ToList();
-
             }
             PagedList<Product> models = new PagedList<Product>(lsNews.AsQueryable(), pageNumber, pageSize);
             ViewBag.CurrentCatID = CatID;
@@ -59,15 +55,17 @@ namespace VGSShop.Areas.Admin.Controllers
             ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName", CatID);
             return View(models);
         }
+
         public IActionResult Filtter(int CatID = 0)
         {
             var url = $"/Admin/AdminProducts?CatID={CatID}";
             if (CatID == 0)
             {
                 url = $"/Admin/AdminProducts";
-            }            
+            }
             return Json(new { status = "success", redirectUrl = url });
-        }       
+        }
+
         // GET: Admin/AdminProducts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -99,32 +97,22 @@ namespace VGSShop.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,MetaDesc,MetaKey,UnitslnStock")] Product product, Microsoft.AspNetCore.Http.IFormFile fThumb, IFormFile[] fMoreThumb)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,UnitslnStock")] Product product, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
             if (ModelState.IsValid)
             {
                 product.ProductName = Utilities.ToTitleCase(product.ProductName);
-                //List<string> moreImage = new List<string>(product.MoreThumb);
-                if(fThumb != null)
+                if (fThumb != null)
                 {
                     string extension = Path.GetExtension(fThumb.FileName);
                     string image = Utilities.ToUnsignString(product.ProductName) + extension;
                     product.Thumb = await Utilities.UploadFile(fThumb, @"product", image.ToLower());
                 }
                 if (string.IsNullOrEmpty(product.Thumb)) product.Thumb = "default.jpg";
-
-                //if (fMoreThumb != null)
-                //{
-                //    product.MoreThumb = new List<string>(product.MoreThumb);
-                //    foreach (IFormFile photo in fMoreThumb)
-                //    {
-                //        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", photo.FileName);
-                //        var stream = new FileStream(path, FileMode.Create);
-                //        photo.CopyToAsync(stream);
-                //        product.MoreThumb.Add(photo.FileName);
-                //    }
-                //}
-                //ViewBag.product = product;
+                if (product.Discount > product.Price)
+                {
+                    product.Sale = ((double?)(((product.Discount - product.Price) / product.Discount) * 100));
+                }
                 product.Alias = Utilities.ToUnsignString(product.ProductName);
                 product.DateModified = DateTime.Now;
                 product.DateCreated = DateTime.Now;
@@ -238,6 +226,7 @@ namespace VGSShop.Areas.Admin.Controllers
         {
             return _context.Products.Any(e => e.ProductId == id);
         }
+
         [HttpPost]
         public JsonResult ChangeStatus(int id)
         {
@@ -247,6 +236,7 @@ namespace VGSShop.Areas.Admin.Controllers
                 status = result
             });
         }
+
         [HttpDelete]
         public ActionResult Delete(int id)
         {

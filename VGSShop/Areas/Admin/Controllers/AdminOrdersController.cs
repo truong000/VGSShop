@@ -314,6 +314,7 @@ namespace VGSShop.Areas.Admin.Controllers
             {
                 Sheet.Cells[string.Format("A{0}", row)].Value = item.OrderId;
                 Sheet.Cells[string.Format("B{0}", row)].Value = item.Customer.FullName;
+                Sheet.Cells[string.Format("C{0}", row)].Style.Numberformat.Format = "yyyy-mm-dd";
                 Sheet.Cells[string.Format("C{0}", row)].Value = item.OrderDate;
                 Sheet.Cells[string.Format("D{0}", row)].Value = item.TotalMoney;
                 Sheet.Cells[string.Format("E{0}", row)].Value = item.Address;

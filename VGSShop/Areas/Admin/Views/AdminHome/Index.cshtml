@@ -81,21 +81,26 @@
     <h1 id="result">0 VNĐ</h1>
 </form>
 
+<div>
+    <canvas id="chartProduct"></canvas>
+</div>
 
 @section Script {
+    <script src="~/AdminAssets/js/ChartJs.js"></script>
     <script>
-
         $(document).ready(function () {
-            $("#btnSubmit").click(function () {
+            $("#btnSubmit").click(function (e) {
+                e.preventDefault();
+
                 var ngaybatdau = $("#txtstart").val();
                 var ngayketthuc = $("#txtstop").val();
                 $.ajax({
                     url: '/Admin/AdminHome/ThongKe/',
                     datatype: "json",
                     type: "POST",
-                    data: { datestart: ngaybatdau, datestop: ngayketthuc},
+                    data: { datestart: ngaybatdau, datestop: ngayketthuc },
                     success: function (results) {
-/*                        window.console && console.log('result');*/
+
                         $("#result").html("");
                         $("#result").html(results);
                     },
@@ -105,7 +110,32 @@
                 });
             });
         });
+
+        var ctx = document.getElementById('chartProduct');
+
+        var barChartData = {
+            labels: ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'],
+            datasets: [{
+                label: 'Series A',
+                backgroundColor: '#0b9663',
+                borderWidth: 1,
+                data: [56, 55, 40, 37, 54, 76, 63, 62]
+            },
+            //{
+            //    label: 'Series B',
+            //    borderWidth: 1,
+            //    data: [86, 27, 90, 43, 65, 76, 87, 85]
+            //}]
+                ]
+        };
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: barChartData,
+            //options: options
+        });
     </script>
+    
 }
 
 

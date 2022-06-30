@@ -11,6 +11,7 @@ namespace VGSShop.ModelsView
         public List<ProductHomeVM> Products { get; set; }
 
         public List<News> News { get; set; }
+        public List<Banner> Banners { get; set; }
     }
 
 }

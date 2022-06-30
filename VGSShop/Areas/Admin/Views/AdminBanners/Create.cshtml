@@ -1,0 +1,80 @@
+﻿@model VGSShop.Models.Banner
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Trang chủ</a>
+            <a class="breadcrumb-item" asp-area="Admin" asp-controller="AdminBanners" asp-action="Index">Danh sách Banner quảng cáo</a>
+            <span class="breadcrumb-item active">Thêm mới banner quảng cáo</span>
+        </nav>
+    </div>
+</div>
+<form asp-controller="AdminBanners" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="page-header no-gutters has-tab">
+        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+            <div class="media align-items-center m-b-15">
+
+            </div>
+            <div class="m-b-15">
+                <button class="btn btn-primary">
+                    <i class="anticon anticon-save"></i>
+                    <span>LƯU</span>
+                </button>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#product-edit-basic">THÔNG TIN DANH MỤC</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#product-edit-option">THÔNG TIN SEO</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#product-edit-description">MÔ TẢ</a>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="product-edit-basic">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="productName">TÊN </label>
+                        <input type="text" class="form-control" asp-for="Description">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="productName">SẮP XẾP</label>
+                        <input type="text" class="form-control" asp-for="DisplayOrder">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="productBrand">HÌNH ẢNH</label>
+                        <input name="fThumb" type="file" class="form-control-file" asp-for="Image">
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="m-t-25">
+                            <div class="form-group d-flex align-items-center">
+                                <div class="switch m-r-10">
+                                    <input type="checkbox" asp-for="Status" checked="">
+                                    <label for="Published"></label>
+                                </div>
+                                <label>Kích hoạt</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</form>
+
+

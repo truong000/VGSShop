@@ -1,39 +1,36 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using VGSShop.Helpers;
 using VGSShop.Models;
 
 namespace VGSShop.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize()]
-    public class AdminBannerController : Controller
+    public class AdminBannersController : Controller
     {
         private readonly VGSShopContext _context;
         public INotyfService _notyfService { get; }
-        public AdminBannerController(VGSShopContext context, INotyfService notyfService)
+
+        public AdminBannersController(VGSShopContext context, INotyfService notyfService)
         {
             _context = context;
             _notyfService = notyfService;
         }
 
-        // GET: Admin/AdminPages
-        public async Task<IActionResult> Index(int? page)
+        // GET: Admin/AdminBanners
+        public async Task<IActionResult> Index()
         {
-            var lsPages = _context.Banners
-                .AsNoTracking()
-                .OrderByDescending(x => x.Id);
-            return View();
+            return View(await _context.Banners.ToListAsync());
         }
 
-        // GET: Admin/AdminPages/Details/5
+        // GET: Admin/AdminBanners/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,48 +38,49 @@ namespace VGSShop.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var page = await _context.Banners
+            var banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (page == null)
+            if (banner == null)
             {
                 return NotFound();
             }
 
-            return View(page);
+            return View(banner);
         }
 
-        // GET: Admin/AdminPages/Create
+        // GET: Admin/AdminBanners/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/AdminPages/Create
+        // POST: Admin/AdminBanners/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Image,DisplayOrder,Description,Status")] Banner page, Microsoft.AspNetCore.Http.IFormFile fThumb)
+        public async Task<IActionResult> Create([Bind("Id,Image,DisplayOrder,Link,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,Status")] Banner banner, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
             if (ModelState.IsValid)
-            {//Xử lý hình ảnh thumb
+            {
+                //Xử lý hình ảnh thumb
                 if (fThumb != null)
                 {
                     string extension = Path.GetExtension(fThumb.FileName);
-                    string image = Utilities.ToUnsignString(page.Description) + extension;
-                    page.Image = await Utilities.UploadFile(fThumb, @"banner", image.ToLower());
+                    string image = Utilities.ToUnsignString(banner.Description) + extension;
+                    banner.Image = await Utilities.UploadFile(fThumb, @"banner", image.ToLower());
                 }
-                if (string.IsNullOrEmpty(page.Image)) page.Image = "default.jpg";
-                page.Description = Utilities.ToUnsignString(page.Description);
-                _context.Add(page);
+                if (string.IsNullOrEmpty(banner.Image)) banner.Image = "default.jpg";
+                _context.Add(banner);
                 await _context.SaveChangesAsync();
-                _notyfService.Success("Thêm sản PAGES thành công");
+                _notyfService.Success("Thêm thành công");
                 return RedirectToAction(nameof(Index));
+
             }
-            return View(page);
+            return View(banner);
         }
 
-        // GET: Admin/AdminPages/Edit/5
+        // GET: Admin/AdminBanners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,22 +88,22 @@ namespace VGSShop.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var page = await _context.Banners.FindAsync(id);
-            if (page == null)
+            var banner = await _context.Banners.FindAsync(id);
+            if (banner == null)
             {
                 return NotFound();
             }
-            return View(page);
+            return View(banner);
         }
 
-        // POST: Admin/AdminPages/Edit/5
+        // POST: Admin/AdminBanners/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Image,DisplayOrder,Description,Status")] Banner page, Microsoft.AspNetCore.Http.IFormFile fThumb)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Image,DisplayOrder,Link,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,Status")] Banner banner, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
-            if (id != page.Id)
+            if (id != banner.Id)
             {
                 return NotFound();
             }
@@ -113,22 +111,22 @@ namespace VGSShop.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 try
-                { //Xử lý hình ảnh thumb
+                {
+                    //Xử lý hình ảnh thumb
                     if (fThumb != null)
                     {
                         string extension = Path.GetExtension(fThumb.FileName);
-                        string image = Utilities.ToUnsignString(page.Description) + extension;
-                        page.Image = await Utilities.UploadFile(fThumb, @"banner", image.ToLower());
+                        string image = Utilities.ToUnsignString(banner.Description) + extension;
+                        banner.Image = await Utilities.UploadFile(fThumb, @"banner", image.ToLower());
                     }
-                    if (string.IsNullOrEmpty(page.Image)) page.Image = "default.jpg";
-                    page.Description = Utilities.ToUnsignString(page.Description);
-                    _context.Update(page);
+                    if (string.IsNullOrEmpty(banner.Image)) banner.Image = "default.jpg";
+                    _context.Update(banner);
                     await _context.SaveChangesAsync();
-                    _notyfService.Success("Chỉnh sửa Banner thành công");
+                    _notyfService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PageExists(page.Id))
+                    if (!BannerExists(banner.Id))
                     {
                         return NotFound();
                     }
@@ -139,10 +137,10 @@ namespace VGSShop.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(page);
+            return View(banner);
         }
 
-        // GET: Admin/AdminPages/Delete/5
+        // GET: Admin/AdminBanners/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,29 +148,29 @@ namespace VGSShop.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var page = await _context.Banners
+            var banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (page == null)
+            if (banner == null)
             {
                 return NotFound();
             }
 
-            return View(page);
+            return View(banner);
         }
 
-        // POST: Admin/AdminPages/Delete/5
+        // POST: Admin/AdminBanners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var page = await _context.Banners.FindAsync(id);
-            _context.Banners.Remove(page);
+            var banner = await _context.Banners.FindAsync(id);
+            _context.Banners.Remove(banner);
             await _context.SaveChangesAsync();
-            _notyfService.Success("Xóa PAGES thành công");
+            _notyfService.Success("Xóa thành công");
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PageExists(int id)
+        private bool BannerExists(int id)
         {
             return _context.Banners.Any(e => e.Id == id);
         }

@@ -35,6 +35,7 @@ namespace VGSShop.Models
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<TransactStatus> TransactStatuses { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
+        public virtual DbSet<Sp_GetReportProductByMonth> Sp_GetReportProductByMonths { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var builder = new ConfigurationBuilder()
@@ -328,9 +329,7 @@ namespace VGSShop.Models
 
                 entity.Property(e => e.DateModified).HasColumnType("datetime");
 
-                entity.Property(e => e.MetaDesc).HasMaxLength(255);
-
-                entity.Property(e => e.MetaKey).HasMaxLength(255);
+                entity.Property(e => e.DateOfManufacture).HasColumnType("datetime");
 
                 entity.Property(e => e.ProductName)
                     .IsRequired()
@@ -341,8 +340,6 @@ namespace VGSShop.Models
                 entity.Property(e => e.Thumb).HasMaxLength(255);
 
                 entity.Property(e => e.Title).HasMaxLength(255);
-
-                entity.Property(e => e.Video).HasMaxLength(255);
 
                 entity.HasOne(d => d.Cat)
                     .WithMany(p => p.Products)
@@ -403,6 +400,23 @@ namespace VGSShop.Models
 
                 entity.Property(e => e.Phone).HasMaxLength(50);
             });
+            //modelBuilder.Entity<Footers>(entity =>
+            //{
+            //    entity.ToTable("Footers");
+
+            //    entity.Property(e => e.ID).HasColumnName("ID");
+
+            //    entity.Property(e => e.Address).HasMaxLength(250);
+
+            //    entity.Property(e => e.Other).HasMaxLength(250);
+
+            //    entity.Property(e => e.Email).HasMaxLength(50);
+
+            //    entity.Property(e => e.Name).HasMaxLength(50);
+
+            //    entity.Property(e => e.Phone).HasMaxLength(50);
+            //});
+
 
             OnModelCreatingPartial(modelBuilder);
         }
@@ -410,5 +424,8 @@ namespace VGSShop.Models
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
         public DbSet<VGSShop.Models.ProductViewModel> ProductViewModel { get; set; }
+
+
+
     }
 }

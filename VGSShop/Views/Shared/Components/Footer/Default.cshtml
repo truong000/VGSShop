@@ -1,0 +1,27 @@
+﻿@model List<Contact>
+
+@if (Model != null)
+{
+    @foreach (var item in Model)
+        {
+        <p class="short-desc mb-2">@item.Content</p>
+        <div class="widget-contact-info pb-6">
+            <ul>
+                <li>
+                    <i class="pe-7s-phone"></i>
+                    @item.Phone
+                </li>
+                <li>
+                    <i class="pe-7s-map-marker"></i>
+                    @item.Address
+                </li>
+                <li>
+                    <i class="pe-7s-mail"></i>
+                    <a href="mailto://truongham090@gmail.com">@item.Email</a>
+                </li>
+            </ul>
+        </div>
+    }
+}
+
+

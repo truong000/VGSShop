@@ -45,12 +45,12 @@
             <table class="table table-hover e-commerce-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Giá</th>
-                        <th>Tồn kho</th>
-                        <th>Trạng thái</th>
-                        <th></th>
+                        <th style="width: 10%">ID</th>
+                        <th style="width: 40%">Tên sản phẩm</th>
+                        <th style="width: 10%">Giá</th>
+                        <th style="width: 10%">Tồn kho</th>
+                        <th style="width: 10%">Trạng thái</th>
+                        <th style="width: 20%"></th>
                     </tr>
                 </thead>
                 <tbody id="records_table">
@@ -59,18 +59,18 @@
                         @foreach (var item in Model)
                         {
                             <tr id="row_@item.ProductId">
-                                <td>@item.ProductId</td>
-                                <td>
+                                <td style="width: 10%">@item.ProductId</td>
+                                <td style="width: 40%">
                                     @item.ProductName
                                 </td>
                                 @*<td>@item.Cat.CatName</td>*@
-                                <td>@item.Price.ToString("#,##0") VNĐ</td>
-                                <td>@item.UnitslnStock</td>
-                                <td><a href="#" class="btn-active btn btn-info btn-tone m-r-5" data-id="@item.ProductId">@Html.Raw(item.Active ? "<strong>Kích hoạt</strong>" : "Khoá")</a></td>
-                                <td class="text-right">
-                                    <a class="btn btn-secondary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Details" asp-route-id="@item.ProductId">Details</a>
-                                    <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@item.ProductId">Edit</a>
-                                    <a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+                                <td style="width: 10%">@item.Price.ToString("#,##0") VNĐ</td>
+                                <td style="width: 10%">@item.UnitslnStock</td>
+                                <td style="width: 10%"><a href="#" class="btn-active btn btn-info btn-tone m-r-5" data-id="@item.ProductId">@Html.Raw(item.Active ? "<strong>Kích hoạt</strong>" : "Khoá")</a></td>
+                                <td class="text-right" style="width: 20%">
+                                    <a class="btn btn-secondary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Details" asp-route-id="@item.ProductId">Chi tiết</a>
+                                    <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@item.ProductId">Sửa</a>
+                                    <a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="AdminProducts" asp-action="Delete" asp-route-id="@item.ProductId">Xóa</a>
                                 </td>
                             </tr>
 

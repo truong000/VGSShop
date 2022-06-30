@@ -11,6 +11,7 @@ namespace VGSShop.Enums
         Khachhang,
         Keyword,
         TinDang,
-        Danger
+        Danger,
+        Footer
     }
 }
