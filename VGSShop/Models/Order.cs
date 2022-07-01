@@ -14,7 +14,7 @@ namespace VGSShop.Models
 
         public int OrderId { get; set; }
         public int? CustomerId { get; set; }
-        public DateTime OrderDate { get; set; }
+        public DateTime? OrderDate { get; set; }
         public DateTime? ShipDate { get; set; }
         public int TransactStatusId { get; set; }
         public bool Deleted { get; set; }

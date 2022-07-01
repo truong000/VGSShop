@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Admin Index";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var currentMonth = DateTime.Now.Month;
 }
 
 <div class="row">
@@ -81,7 +82,23 @@
     <h1 id="result">0 VNĐ</h1>
 </form>
 
-<div>
+<div class="row">
+    <div class="col-md-12">
+        <select id="ddlMonth" class="form-control" style="width: 150px;">
+            <option value="0">Chọn tháng</option>
+            @for (var i = 1; i < 13; i++)
+            {
+                if (i == currentMonth)
+                {
+                    <option value="@i" selected>Tháng @i</option>
+                }
+                else
+                {
+                    <option value="@i">Tháng @i</option>
+                }
+            }
+        </select>
+    </div>
     <canvas id="chartProduct"></canvas>
 </div>
 
@@ -109,31 +126,62 @@
                     }
                 });
             });
+            $('#ddlMonth').trigger('change');
         });
 
-        var ctx = document.getElementById('chartProduct');
+        $('#ddlMonth').on('change', function () {
+            var month = $(this).val();
 
-        var barChartData = {
-            labels: ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'],
-            datasets: [{
-                label: 'Series A',
-                backgroundColor: '#0b9663',
-                borderWidth: 1,
-                data: [56, 55, 40, 37, 54, 76, 63, 62]
-            },
-            //{
-            //    label: 'Series B',
-            //    borderWidth: 1,
-            //    data: [86, 27, 90, 43, 65, 76, 87, 85]
-            //}]
-                ]
-        };
-
-        var myBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: barChartData,
-            //options: options
+            $.get('/Admin/AdminHome/GetReportByMonth?month=' + month, function (resp) {
+                console.log(resp);
+                var labels = resp.map(x => x.productName);
+                var datasets = [];
+                datasets.push({
+                    label: "Sản phẩm",
+                    backgroundColor: '#0b9663',
+                    borderWidth: 1,
+                    data: resp.map(x => x.total)
+                });
+                RegisterChartProduct(labels, datasets);
+            });
         });
+
+        // RegisterChartProduct();
+        var myBarChart;
+
+        function RegisterChartProduct(labels, datasets) {
+            var ctx = document.getElementById('chartProduct');
+
+            if (myBarChart) {
+                myBarChart.destroy();
+            }
+
+            var barChartData = {
+                labels: labels, // ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018'],
+                datasets: datasets
+                //datasets: [{
+                //    label: 'Series A',
+                //    backgroundColor: '#0b9663',
+                //    borderWidth: 1,
+                //    data: [56, 55, 40, 37, 54, 76, 63, 62]
+                //},
+                //    //{
+                //    //    label: 'Series B',
+                //    //    borderWidth: 1,
+                //    //    data: [86, 27, 90, 43, 65, 76, 87, 85]
+                //    //}]
+                //]
+            };
+
+             myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData,
+                //options: options
+
+            });
+        }
+
+        
     </script>
     
 }

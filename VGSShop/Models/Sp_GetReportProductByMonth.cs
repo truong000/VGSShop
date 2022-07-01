@@ -7,8 +7,8 @@ namespace VGSShop.Models
 {
     public partial class Sp_GetReportProductByMonth
     {
-        public int Month { get; set; }
+        public string Month { get; set; }
         public string ProductName { get; set; }
-        public int total { get; set; }
+        public string total { get; set; }
     }
 }

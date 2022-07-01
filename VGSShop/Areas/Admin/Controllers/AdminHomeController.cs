@@ -1,9 +1,11 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using VGSShop.Models;
@@ -31,8 +33,8 @@ namespace VGSShop.Areas.Admin.Controllers
         [HttpPost]
         public string ThongKe(DateTime datestart, DateTime datestop)
         {
-            var data = _context.Orders.AsNoTracking()
-                .Where(x=>x.OrderDate>=datestart && x.OrderDate<=datestop &&  x.PaymentDate.HasValue)
+            var data = _context.Orders
+                .Where(x => x.OrderDate >= datestart && x.OrderDate <= datestop && x.PaymentDate.HasValue)
                 .Sum(x => x.TotalMoney);
             string model = data.ToString("#,##0 VNĐ");
             return model;
@@ -52,6 +54,36 @@ namespace VGSShop.Areas.Admin.Controllers
             int khachhang = _context.Customers.Count();
             return khachhang;
         }
+
+        [HttpGet]
+        public IActionResult GetReportByMonth(int month)
+        {
+            var param = new SqlParameter("@Month", month);
+            var connStr = _context.Database.GetDbConnection().ConnectionString;
+            using var conn = new SqlConnection(connStr);
+            conn.Open();
+            var sqlCommand = new SqlCommand();
+            sqlCommand.Connection = conn;
+            sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
+            sqlCommand.CommandText = "Sp_GetReportProductByMonth";
+            sqlCommand.Parameters.Add("@Month", System.Data.SqlDbType.Int);
+            sqlCommand.Parameters["@Month"].Value = month;
+
+            var reader = sqlCommand.ExecuteReader();
+            var op = new List<Sp_GetReportProductByMonth>();
+            while(reader.Read())
+            {
+                op.Add(new Sp_GetReportProductByMonth()
+                {
+                    Month = Convert.ToString(reader["month"]),
+                    ProductName = Convert.ToString(reader["ProductName"]),
+                    total = Convert.ToString(reader["total"])
+                });
+            }
+
+            return Ok(op);
+        }
     }
+
 
 }
