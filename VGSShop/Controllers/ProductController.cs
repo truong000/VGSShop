@@ -19,18 +19,35 @@ namespace VGSShop.Controllers
             _context = context;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("shop.html", Name = "ShopProduct")]
-        public IActionResult Index(int? page)
+        public IActionResult Index(string sortOrder, int? page)
         {
             try
             {
+                ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+                ViewData["DateSortParm1"] = sortOrder == "discount" ? "date_desc" : "discount";
+
                 HomeViewVM model = new HomeViewVM();
                 var pageNumber = page == null || page <= 0 ? 1 : page.Value;
                 var pageSize = 12;
                 var lsProduct = _context.Products
-                    .AsNoTracking()
-                    .OrderByDescending(x => x.DateCreated);
+                    .AsNoTracking();
+                switch (sortOrder)
+                {
+                    case "Date":
+                        lsProduct = lsProduct.OrderBy(s => s.Price);
+                        break;
+
+                    case "discount":
+                        lsProduct = lsProduct.Where(x => x.Discount.HasValue)
+                            .OrderByDescending(x => x.Discount);
+                        break;
+
+                    default:
+                        lsProduct = lsProduct.OrderByDescending(x => x.DateCreated);
+                        break;
+                }
                 PagedList<Product> models = new PagedList<Product>(lsProduct, pageNumber, pageSize);
                 ViewBag.CurrentPage = pageNumber;
                 return View(models);
@@ -83,7 +100,7 @@ namespace VGSShop.Controllers
             try
             {
                 ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-                ViewData["DateSortParm1"] = sortOrder == "Date" ? "date_desc" : "discount";
+                ViewData["DateSortParm1"] = sortOrder == "discount" ? "date_desc" : "discount";
                 //ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
                 var pageSize = 10; //20
                 var category = _context.Categories.AsNoTracking().SingleOrDefault(x => x.Alias == Alias);
@@ -97,7 +114,8 @@ namespace VGSShop.Controllers
                         break;
 
                     case "discount":
-                        lsProduct = lsProduct.OrderByDescending(x => x.Discount.HasValue);
+                        lsProduct = lsProduct.Where(x => x.Discount.HasValue)
+                            .OrderByDescending(x => x.Discount);
                         break;
 
                     default:

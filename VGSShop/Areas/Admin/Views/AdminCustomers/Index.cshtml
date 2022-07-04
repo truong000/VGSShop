@@ -17,36 +17,51 @@
 </div>
 <div class="card">
     <div class="card-body">
+        <div class="col-md-5">
+            <div class="input-affix m-v-10">
+
+                <i class="prefix-icon anticon-search opacity-04"></i>
+                <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm sản phẩm" />
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover e-commerce-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Thông tin khách hàng</th>
+                        <th>Họ tên</th>
                         <th>Địa chỉ</th>
-                        <th>Ngày đăng ký</th>
-                        <th>Thao tác</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo tài khoản</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="records_table">
                     @if (Model != null)
                     {
                         @foreach (var item in Model)
                         {
-                            <tr>
-                                <td>@item.CustomerId</td>
-                                <td>
-                                    <p>@item.FullName</p>
-                                    <p>@item.Phone</p>
-                                    <p>@item.Email</p>
-                                </td>
-                                <td>@item.Adress</td>
-                                <td>@item.CreateDate</td>
-                                @*<td>@item.Location.Name</td>*@
-                                <td class="text-right">
-                                    <a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="AdminCustomers" asp-action="Delete" asp-route-id="@item.CustomerId">Delete</a>
-                                </td>
-                            </tr>
+                    <tr>
+                        <td>@item.CustomerId</td>
+                        <td>
+                            @item.FullName
+                        </td>
+                        <td>
+                            @item.Adress
+
+                        </td>
+                        <td>
+                        @item.Phone
+
+                        </td>
+                        <td>
+                            @item.Email
+
+                        </td>
+                        <td style="width: 10%"><a href="#" class="btn-active btn btn-info btn-tone m-r-5" data-id="@item.CustomerId">@Html.Raw(item.Active ? "<strong>Kích hoạt</strong>" : "Khoá")</a></td>
+                        <td>@item.CreateDate</td>
+                    </tr>
 
                         }
                     }
@@ -60,3 +75,60 @@
         </div>
     </div>
 </div>
+@section Script{
+    <script>
+        $(document).ready(function () {
+            jQuery("#txtCatID").change(function () {
+                var catID = jQuery(this).children(":selected").attr("value");
+                catID = parseFloat(catID);
+                $('#txtCatID option')
+                    .removeAttr('selected');
+                $("#txtCatID > [value=" + catID + "]").attr("selected", "true");
+
+                //var gvID = jQuery(this).children(":selected").attr("value");
+                //gvID = parseFloat(gvID);
+                //$('#txtTeacherID option')
+                //    .removeAttr('selected');
+                //$("#txtTeacherID > [value=" + gvID + "]").attr("selected", "true");
+
+                $.ajax({
+                    url: '/Admin/AdminOrders/Filtter',
+                    datatype: "json",
+                    type: "GET",
+                    data: {
+                        TransactStatusID: catID,
+                    },
+                    async: true,
+                    success: function (results) {
+                        if (results.status == "success") {
+                            window.location.href = results.redirectUrl;
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('Đã xảy ra lỗi');
+                    }
+                });
+            });
+
+            $("#keyword").keyup(function () {
+                var strkeyword = $('#keyword').val();
+                $.ajax({
+                    url: '/Admin/Search/FindCustomer/',
+                    datatype: "json",
+                    type: "POST",
+                    data: { keyword: strkeyword },
+                    async: true,
+                    success: function (results) {
+                        $("#records_table").html("");
+                        $("#records_table").html(results);
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script src="~/AdminAssets/js/controller/feedbackControllerScript.js"></script>
+}

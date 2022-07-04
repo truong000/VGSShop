@@ -33,15 +33,6 @@ namespace VGSShop.Models
         public virtual DbSet<TransactStatus> TransactStatuses { get; set; }
         public virtual DbSet<Sp_GetReportProductByMonth> Sp_GetReportProductByMonths { get; set; }
 
-        //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //        {
-        //            if (!optionsBuilder.IsConfigured)
-        //            {
-        //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        //                optionsBuilder.UseSqlServer("Server=XUANTRUONG;Database=VGSShop;Integrated Security=true;");
-        //            }
-        //        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
@@ -409,30 +400,10 @@ namespace VGSShop.Models
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
             modelBuilder.Entity<Sp_GetReportProductByMonth>().HasNoKey();
-            //OnModelCreatingPartial(modelBuilder);
         }
 
-        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
-        //public async Task<List<Sp_GetReportProductByMonth>> Sp_GetReportProductByMonths()
-        //{
-        //    // Initialization.
-        //    List<Sp_GetReportProductByMonth> lst = new List<Sp_GetReportProductByMonth>();
 
-        //    try
-        //    {
-        //        // Processing.
-        //        string sqlQuery = "EXEC [dbo].[Sp_GetReportProductByMonth] ";
-
-        //        lst = await this.Query<Sp_GetReportProductByMonth>().FromSql(sqlQuery).ToListAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-
-        //    // Info.
-        //    return lst;
-        //}
     }
 }

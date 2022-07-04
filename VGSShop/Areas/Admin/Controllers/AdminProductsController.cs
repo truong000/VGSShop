@@ -109,10 +109,10 @@ namespace VGSShop.Areas.Admin.Controllers
                     product.Thumb = await Utilities.UploadFile(fThumb, @"product", image.ToLower());
                 }
                 if (string.IsNullOrEmpty(product.Thumb)) product.Thumb = "default.jpg";
-                if (product.Discount > product.Price)
-                {
-                    product.Sale = ((double?)(((product.Discount - product.Price) / product.Discount) * 100));
-                }
+                //if (product.Discount > product.Price)
+                //{
+                //    product.Sale = ((double?)(((product.Discount - product.Price) / product.Discount) * 100));
+                //}
                 product.Alias = Utilities.ToUnsignString(product.ProductName);
                 product.DateModified = DateTime.Now;
                 product.DateCreated = DateTime.Now;

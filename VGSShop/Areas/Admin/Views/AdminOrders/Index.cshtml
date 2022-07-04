@@ -16,60 +16,72 @@ AdminOrders
 </div>
 <div class="card">
     <div class="card-body">
-        <div class="table-responsive">
-            <h2>Danh sách đơn hàng</h2>
-            <div class="col-md-5">
-                <div class="input-affix m-v-10">
-                    <select class="custom-select" id="txtCatID" name="txtCatID" style="min-width:200px; margin-top:10px; " asp-items="ViewBag.TrangThaiDonHang">
-                        <option selected>Chọn tất cả </option>
-                        <option value="0" disabled selected>Lọc theo trạng thái đơn hàng</option>
-                    </select>
+        <h2>Danh sách đơn hàng</h2>
+        <div class="text-right" style="overflow: hidden; padding: 1px 0px 0px 0px; margin-top: -47px; margin-bottom: 10px;">
+            <button type="button" class="btn btn-info" onclick="location.href='@Url.Action("ExportToExcel", "AdminOrders")'">Xuất file Excel</button>
+        </div>
+        <div class="row m-b-30">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="input-affix m-v-10">
+                            <i class="prefix-icon anticon anticon-search opacity-04"></i>
+                            <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm sản phẩm" />
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="input-affix m-v-10">
+                            <select class="custom-select" id="txtCatID" name="txtCatID" style="min-width:200px; " asp-items="ViewBag.TrangThaiDonHang">
+                                <option selected>Chọn tất cả </option>
+                                <option value="0" disabled selected>Lọc theo trạng thái đơn hàng</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="text-right" style="overflow: hidden; padding: 1px 0px 0px 0px; margin-top: -47px; margin-bottom: 10px;">
-                <button type="button" class="btn btn-info" onclick="location.href='@Url.Action("ExportToExcel", "AdminOrders")'">Export To Excel</button>
-            </div>
-            <table class="table table-hover e-commerce-table">
-                <thead>
-                    <tr>
-                        <th>ĐƠN HÀNG</th>
-                        <th>KHÁCH HÀNG</th>
-                        <th>NGÀY MUA</th>
-                        <th>TỔNG TIỀN</th>
-                        <th>TRẠNG THÁI</th>
-                        <th>THAO TÁC</th>
-                    </tr>
-                </thead>
-                <tbody id="records_table">
-                    @if (Model != null)
-                    {
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.OrderId</td>
-                                <td>@item.Customer.FullName</td>
-                                <td>@item.OrderDate</td>
-                                <td>@item.TotalMoney.ToString("#,##0") VNĐ</td>
-                                <td>@item.TransactStatus.Status</td>
-                                <td class="text-right">
-                                    <a class="btn btn-secondary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Details" asp-route-id="@item.OrderId">Chi tiết</a>
-                                    <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Edit" asp-route-id="@item.OrderId">Sửa</a>
-                                    <a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Delete" asp-route-id="@item.OrderId">Xóa</a>
-                                </td>
-                            </tr>
 
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover e-commerce-table">
+                    <thead>
+                        <tr>
+                            <th>ĐƠN HÀNG</th>
+                            <th>KHÁCH HÀNG</th>
+                            <th>NGÀY MUA</th>
+                            <th>TỔNG TIỀN</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="records_table">
+                        @if (Model != null)
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.OrderId</td>
+                                    <td>@item.Customer.FullName</td>
+                                    <td>@item.OrderDate</td>
+                                    <td>@item.TotalMoney.ToString("#,##0") VNĐ</td>
+                                    <td>@item.TransactStatus.Status</td>
+                                    <td class="text-right">
+                                        <a class="btn btn-secondary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Details" asp-route-id="@item.OrderId">Chi tiết</a>
+                                        <a class="btn btn-primary btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Edit" asp-route-id="@item.OrderId">Cập nhật trạng thái</a>
+                                        @*<a class="btn btn-success btn-tone m-r-5" asp-area="Admin" asp-controller="AdminOrders" asp-action="Delete" asp-route-id="@item.OrderId">Xóa</a>*@
+                                    </td>
+                                </tr>
+
+                            }
                         }
-                    }
-                </tbody>
-            </table>
-            <div aria-label="Page navigation example">
-                <ul class="pagination">
-                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminOrders" asp-action="Index" />
-                </ul>
+                    </tbody>
+                </table>
+                <div aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminOrders" asp-action="Index" />
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @section Script{
     <script>
         $(document).ready(function () {
@@ -108,7 +120,7 @@ AdminOrders
             $("#keyword").keyup(function () {
                 var strkeyword = $('#keyword').val();
                 $.ajax({
-                    url: '/Admin/Search/FindProduct/',
+                    url: '/Admin/Search/FindOrder/',
                     datatype: "json",
                     type: "POST",
                     data: { keyword: strkeyword },

@@ -31,6 +31,11 @@ namespace VGSShop.Controllers
                 .OrderByDescending(x => x.DateCreated)
                 .Take(8)
                 .ToList();
+            var lsProductHot = _context.Products.AsNoTracking()
+                .Where(x => x.Active == true && x.HomeFlag == true && x.BestSellers)
+                .OrderByDescending(x => x.DateCreated)
+                .Take(8)
+                .ToList();
             List<ProductHomeVM> lsProductsViews = new List<ProductHomeVM>();
 
             var lsCats = _context.Categories
@@ -63,6 +68,7 @@ namespace VGSShop.Controllers
             model.Products = lsProductsViews;
             model.News = TinTuc;
             ViewBag.AllProduct = lsProduct;
+            ViewBag.AllProductHot = lsProductHot;
             return View(model);
         }
 

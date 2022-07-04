@@ -29,7 +29,6 @@ namespace VGSShop.Models
         public string Alias { get; set; }
         public int? UnitslnStock { get; set; }
         public DateTime? DateOfManufacture { get; set; }
-        public double? Sale { get; set; }
 
         public virtual Category Cat { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }

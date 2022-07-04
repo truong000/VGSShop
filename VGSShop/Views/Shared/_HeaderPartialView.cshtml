@@ -23,7 +23,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingButton">
                                         @if (User.Identity.IsAuthenticated)
                                         {
-                                            <li><a class="dropdown-item" href="/tai-khoan-cua-toi.html">Tài khoản của tôi</a></li>
+                                            <li><a class="dropdown-item" href="/tai-khoan-cua-toi.html">Xin chào: @User.Identity.Name</a></li>
                                             <li><a class="dropdown-item" href="dang-xuat.html">Đăng xuất</a></li>
                                         }
                                         else
@@ -81,12 +81,6 @@
                                     <li>
                                         <a href="/lien-he.html">Liên hệ</a>
                                     </li>
-                                    <li>
-                                        <a href="/page/Huong-dan-mua-hang">Hướng dẫn mua hàng</a>
-                                    </li>
-                                    @*<li>
-                                        <a href="cart.html">Giỏ hàng</a>
-                                    </li>*@
                                 </ul>
                             </nav>
                         </div>
