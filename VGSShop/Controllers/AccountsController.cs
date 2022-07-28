@@ -27,30 +27,30 @@ namespace VGSShop.Controllers
             _context = context;
             _notyfService = notyfService;
         }
-        [Route("tai-khoan-cua-toi.html", Name = "Dashboard")]
-        public IActionResult Dashboard()
+        [Route("tai-khoan-cua-toi.html", Name = "dashBoard")]
+        public IActionResult dashBoard()
         {
-            var taikhoanID = HttpContext.Session.GetString("CustomerId");
-            if (taikhoanID != null)
+            var accountId = HttpContext.Session.GetString("CustomerId");
+            if (accountId != null)
             {
-                var khachhang = _context.Customers.AsNoTracking()
-                    .SingleOrDefault(x => x.CustomerId == Convert.ToInt32(taikhoanID));
-                if (khachhang != null)
+                var customer = _context.Customers.AsNoTracking()
+                    .SingleOrDefault(x => x.CustomerId == Convert.ToInt32(accountId));
+                if (customer != null)
                 {
                     var lsOrder = _context.Orders
                         .Include(x => x.TransactStatus)
                         .AsNoTracking()
-                        .Where(x => x.CustomerId == khachhang.CustomerId)
+                        .Where(x => x.CustomerId == customer.CustomerId)
                         .OrderByDescending(x => x.OrderDate).ToList();
                     ViewBag.Order = lsOrder;
-                    return View(khachhang);
+                    return View(customer);
                 }
             }
-            return RedirectToAction("Login");
+            return RedirectToAction("login");
         }
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ValidatePhone(string Phone)
+        public IActionResult validatePhone(string Phone)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace VGSShop.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ValidateEmail(string Email)
+        public IActionResult validateEmail(string Email)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace VGSShop.Controllers
                             await _context.SaveChangesAsync();
                             //Lưu Session Mã Khách hàng
                             HttpContext.Session.SetString("CustomerId", khachhang.CustomerId.ToString());
-                            var taikhoanID = HttpContext.Session.GetString("CustomerId");
+                            var accountId = HttpContext.Session.GetString("CustomerId");
                             var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, khachhang.FullName),
@@ -134,7 +134,7 @@ namespace VGSShop.Controllers
                             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                             await HttpContext.SignInAsync(claimsPrincipal);
                             _notyfService.Success("Đăng ký tài khoản thành công");
-                            return RedirectToAction("Dashboard", "Accounts");
+                            return RedirectToAction("dashBoard", "Accounts");
                         }
                         catch
                         {
@@ -156,11 +156,11 @@ namespace VGSShop.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("dang-nhap.html", Name = "DangNhap")]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult login(string returnUrl = null)
         {
-            var taikhoanID = HttpContext.Session.GetString("CustomerId");
+            var accountId = HttpContext.Session.GetString("CustomerId");
 
-            if (taikhoanID != null)
+            if (accountId != null)
             {
                 return RedirectToAction("DangKyTaiKhoan", "Accounts");
 
@@ -171,7 +171,7 @@ namespace VGSShop.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("dang-nhap.html", Name = "DangNhap")]
-        public async Task<IActionResult> Login(LoginViewModel customer, string returnUrl = null)
+        public async Task<IActionResult> login(LoginViewModel customer, string returnUrl = null)
         {
             try
             {
@@ -203,7 +203,7 @@ namespace VGSShop.Controllers
 
                     //Lưu Session MaKh
                     HttpContext.Session.SetString("CustomerId", khachhang.CustomerId.ToString());
-                    var taiKhoanID = HttpContext.Session.GetString("CustomerId");
+                    var accountId = HttpContext.Session.GetString("CustomerId");
                     //Identity
                     var claims = new List<Claim>
                     {
@@ -216,7 +216,7 @@ namespace VGSShop.Controllers
                     _notyfService.Success("Đăng nhập thành công");
                     if (string.IsNullOrEmpty(returnUrl))
                     {
-                        return RedirectToAction("Dashboard", "Accounts");
+                        return RedirectToAction("dashBoard", "Accounts");
                     }
                     else
                     {
@@ -243,14 +243,14 @@ namespace VGSShop.Controllers
         {
             try
             {
-                var taikhoanID = HttpContext.Session.GetString("CustomerId");
-                if (taikhoanID == null)
+                var accountId = HttpContext.Session.GetString("CustomerId");
+                if (accountId == null)
                 {
                     return RedirectToAction("Login", "Accounts");
                 }
                 if (ModelState.IsValid)
                 {
-                    var taikhoan = _context.Customers.Find(Convert.ToInt32(taikhoanID));
+                    var taikhoan = _context.Customers.Find(Convert.ToInt32(accountId));
                     if (taikhoan == null) return RedirectToAction("Login", "Accounts");
 
                     var pass = (model.PasswordNow.Trim() + taikhoan.Salt.Trim()).ToMD5();
@@ -261,17 +261,17 @@ namespace VGSShop.Controllers
                         _context.Update(taikhoan);
                         _context.SaveChanges();
                         _notyfService.Success("Đổi mật khẩu thành công");
-                        return RedirectToAction("Dashboard", "Accounts");
+                        return RedirectToAction("dashBoard", "Accounts");
                     }
                 }
             }
             catch
             {
                 _notyfService.Error("Đổi mật khẩu không thành công");
-                return RedirectToAction("Dashboard", "Accounts");
+                return RedirectToAction("dashBoard", "Accounts");
             }
             _notyfService.Error("Đổi mật khẩu không thành công");
-            return RedirectToAction("Dashboard", "Accounts");
+            return RedirectToAction("dashBoard", "Accounts");
         }
         public async Task<IActionResult> Details(int? id)
         {
