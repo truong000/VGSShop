@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
+using VGSShop.Models;
 
 #nullable disable
 
@@ -17,9 +22,7 @@ namespace VGSShop.Models
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Banner> Banners { get; set; }
-
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
@@ -31,7 +34,19 @@ namespace VGSShop.Models
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<TransactStatus> TransactStatuses { get; set; }
+        public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Sp_GetReportProductByMonth> Sp_GetReportProductByMonths { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var builder = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json");
+            var configuration = builder.Build();
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=XUANTRUONG;Database=VGSShop;Integrated Security=true;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -117,23 +132,6 @@ namespace VGSShop.Models
                 entity.Property(e => e.Thumb).HasMaxLength(250);
 
                 entity.Property(e => e.Title).HasMaxLength(250);
-            });
-
-            modelBuilder.Entity<Contact>(entity =>
-            {
-                entity.ToTable("Contact");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Address).HasMaxLength(250);
-
-                entity.Property(e => e.Content).HasMaxLength(250);
-
-                entity.Property(e => e.Email).HasMaxLength(50);
-
-                entity.Property(e => e.Name).HasMaxLength(50);
-
-                entity.Property(e => e.Phone).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -263,8 +261,6 @@ namespace VGSShop.Models
 
                 entity.Property(e => e.ShipDate).HasColumnType("datetime");
 
-                entity.Property(e => e.TotalMoney).HasColumnType("decimal(18, 0)");
-
                 entity.Property(e => e.TransactStatusId).HasColumnName("TransactStatusID");
 
                 entity.HasOne(d => d.Customer)
@@ -285,19 +281,11 @@ namespace VGSShop.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Discount).HasColumnType("decimal(18, 0)");
-
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
-
-                entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
 
                 entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
                 entity.Property(e => e.ShipDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Total).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.TotalMoney).HasColumnType("decimal(18, 0)");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderDetails)
@@ -342,10 +330,6 @@ namespace VGSShop.Models
                 entity.Property(e => e.DateModified).HasColumnType("datetime");
 
                 entity.Property(e => e.DateOfManufacture).HasColumnType("datetime");
-
-                entity.Property(e => e.Discount).HasColumnType("decimal(18, 0)");
-
-                entity.Property(e => e.Price).HasColumnType("decimal(18, 0)");
 
                 entity.Property(e => e.ProductName)
                     .IsRequired()
@@ -399,10 +383,48 @@ namespace VGSShop.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
             });
+
+            modelBuilder.Entity<Contact>(entity =>
+            {
+                entity.ToTable("Contact");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Address).HasMaxLength(250);
+
+                entity.Property(e => e.Content).HasMaxLength(250);
+
+                entity.Property(e => e.Email).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+            });
+            //modelBuilder.Entity<Footers>(entity =>
+            //{
+            //    entity.ToTable("Footers");
+
+            //    entity.Property(e => e.ID).HasColumnName("ID");
+
+            //    entity.Property(e => e.Address).HasMaxLength(250);
+
+            //    entity.Property(e => e.Other).HasMaxLength(250);
+
+            //    entity.Property(e => e.Email).HasMaxLength(50);
+
+            //    entity.Property(e => e.Name).HasMaxLength(50);
+
+            //    entity.Property(e => e.Phone).HasMaxLength(50);
+            //});
+
             modelBuilder.Entity<Sp_GetReportProductByMonth>().HasNoKey();
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<VGSShop.Models.ProductViewModel> ProductViewModel { get; set; }
+
 
 
     }

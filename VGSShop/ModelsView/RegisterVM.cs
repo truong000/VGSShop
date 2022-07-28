@@ -36,6 +36,7 @@ namespace VGSShop.ModelsView
         [Display(Name = "Nhập lại mật khẩu")]
         [Compare("Password", ErrorMessage = "Vui lòng nhập mật khẩu giống nhau")]
         public string ConfirmPassword { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập địa chỉ")]
         [Display(Name = "Địa chỉ")]
         public string Address { get; set; }
     }

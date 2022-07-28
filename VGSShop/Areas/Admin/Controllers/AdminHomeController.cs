@@ -28,6 +28,7 @@ namespace VGSShop.Areas.Admin.Controllers
             ViewBag.ThongKeTongDoanhThu = ThongKeTongDoanhThu();
             ViewBag.ThongKeDonDatHang = ThongKeDonDatHang();
             ViewBag.ThongKeKhachHang = ThongKeKhachHang();
+            ViewBag.ThongKeDonDatHangMoi = ThongKeDonDatHangMoi();
             return View();
         }
         [HttpPost]
@@ -47,6 +48,13 @@ namespace VGSShop.Areas.Admin.Controllers
         public int ThongKeDonDatHang()
         {
             int donhang = _context.Orders.Count();
+            return donhang;
+        }   
+        public int ThongKeDonDatHangMoi()
+        {
+            int donhang = _context.Orders
+                .Where(x => x.TransactStatusId == 1)
+                .Count();
             return donhang;
         }
         public int ThongKeKhachHang()
