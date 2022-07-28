@@ -20,15 +20,15 @@ namespace VGSShop.Controllers
             return View();
         }
         [HttpPost]
-        public JsonResult Send(string name, string mobile, string address, string email, string content)
+        public JsonResult Send(string Name, string Mobile, string Address, string Email, string Content)
         {
             var feedback = new Feedback();
-            feedback.Name = name;
-            feedback.Email = email;
+            feedback.Name = Name;
+            feedback.Email = Email;
             feedback.CreatedDate = DateTime.Now;
-            feedback.Phone = mobile;
-            feedback.Content = content;
-            feedback.Address = address;
+            feedback.Phone = Mobile;
+            feedback.Content = Content;
+            feedback.Address = Address;
 
             var id = new ContenDao().InsertFeedBack(feedback);
             if (id > 0)
