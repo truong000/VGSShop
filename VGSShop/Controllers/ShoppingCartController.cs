@@ -21,16 +21,16 @@ namespace VGSShop.Controllers
             _context = context;
             _notyfService = notyfService;
         }
-        public List<CartItem> Giohang
+        public List<CartItem> Cart
         {
             get
             {
-                var gh = HttpContext.Session.Get<List<CartItem>>("Giohang");
-                if (gh == default(List<CartItem>))
+                var cart = HttpContext.Session.Get<List<CartItem>>("Cart");
+                if (cart == default(List<CartItem>))
                 {
-                    gh = new List<CartItem>();
+                    cart = new List<CartItem>();
                 }
-                return gh;
+                return cart;
             }
         }
         //Thêm mới sản phẩm vào Cart
@@ -38,31 +38,31 @@ namespace VGSShop.Controllers
         [Route("api/cart/add")]
         public IActionResult AddToCart(int productID, int? amount)
         {
-            List<CartItem> gioHang = Giohang;
+            List<CartItem> cart = Cart;
             try
             {
                 //Thêm sản phẩm vào Cart
-                CartItem item = gioHang.SingleOrDefault(p => p.product.ProductId == productID);
+                CartItem item = cart.SingleOrDefault(p => p.product.ProductId == productID);
                 //Cart -- đã có sản sản phẩm ở trong
                 if (item != null)
                 {
                     item.amount = item.amount + amount.Value;
                     //Lưu lại SS
-                    HttpContext.Session.Set<List<CartItem>>("Giohang", gioHang);
+                    HttpContext.Session.Set<List<CartItem>>("Cart", cart);
                 }
                 else
                 {
-                    Product hanghoa = _context.Products.AsNoTracking().SingleOrDefault(p => p.ProductId == productID);
-                    if (amount > hanghoa.UnitslnStock) amount = hanghoa.UnitslnStock.Value;
+                    Product goods = _context.Products.AsNoTracking().SingleOrDefault(p => p.ProductId == productID);
+                    if (amount > goods.UnitslnStock) amount = goods.UnitslnStock.Value;
                     item = new CartItem
                     {
                         amount = amount.HasValue ? amount.Value : 1,
-                        product = hanghoa
+                        product = goods
 
                     };
-                    gioHang.Add(item);// Thêm sp vào cart
+                    cart.Add(item);// Thêm sp vào cart
                 }
-                HttpContext.Session.Set<List<CartItem>>("Giohang", gioHang);
+                HttpContext.Session.Set<List<CartItem>>("Cart", cart);
                 _notyfService.Success("Sản phẩm đã được thêm");
                 return Json(new { success = true });
             }
@@ -79,7 +79,7 @@ namespace VGSShop.Controllers
         public IActionResult UpdateCart(int productID, int? amount)
         {
             //Lấy giỏ hàng ra để xử lý
-            var cart = HttpContext.Session.Get<List<CartItem>>("Giohang");
+            var cart = HttpContext.Session.Get<List<CartItem>>("Cart");
             try
             {
                 if(cart != null)
@@ -90,7 +90,7 @@ namespace VGSShop.Controllers
                         item.amount = amount.Value;
                     }
                     //Lưu lại Session
-                    HttpContext.Session.Set<List<CartItem>>("Giohang", cart);
+                    HttpContext.Session.Set<List<CartItem>>("Cart", cart);
                     _notyfService.Success("Sản phẩm đã được thêm");
                 }
                 return Json(new { success = true });
@@ -108,7 +108,7 @@ namespace VGSShop.Controllers
         {
             try
             {
-                List<CartItem> gioHang = Giohang;
+                List<CartItem> gioHang = Cart;
                 CartItem item = gioHang.SingleOrDefault(p => p.product.ProductId == productID);
                 if (item != null)
                 {
@@ -116,7 +116,7 @@ namespace VGSShop.Controllers
                     //_notyfService.Success("Sản phẩm đã bỏ ra giỏ hàng");
                 }
                 //Lưu lại session
-                HttpContext.Session.Set<List<CartItem>>("Giohang", gioHang);
+                HttpContext.Session.Set<List<CartItem>>("Cart", gioHang);
                 _notyfService.Success("Sản phẩm đã được loại ra");
                 return Json(new { success = true });
             }
@@ -128,8 +128,8 @@ namespace VGSShop.Controllers
         [Route("cart.html", Name = "Cart")]
         public IActionResult Index()
         {
-            var lsGioHang = Giohang;
-            return View(Giohang);
+            var lsGioHang = Cart;
+            return View(Cart);
         }
     }
 }
